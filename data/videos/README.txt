@@ -40,4 +40,4 @@ Current List: (12 Good/ 9 Bad)
 22.	Right … good… educational explanations happening during video --> OMIT
 23.	Right… good (long video) 
 24.	
-== Current plan, use CV to train 18
+== Current plan, use CV to train 20, test on 1.
