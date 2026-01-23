@@ -19,7 +19,7 @@ to open files using the terminal and IINA use the following command:
 
 open -a IINA name_file.avi 
 
-Current List: (12 Good/ 9 Bad)
+Current List: (12 Good/ 9 Bad) <- please update as we add more videos 
 
 1.	Right side (performer) good 
 2.	Middle (performer) good
