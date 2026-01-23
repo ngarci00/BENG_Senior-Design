@@ -15,7 +15,12 @@ https://github.com/wkentaro/labelme/blob/main/examples/video_annotation/README.m
 
 video-toimg nameofvideo.avi 
 
-to open files using the terminal and IINA use the following command:
+--> If for some reason the command doesn't work please use the following command to force the path to be using the .venv folder
+
+source .venv/bin/activate
+--- then the line above ( video-toimg nameofvideo.avi )
+
+--> To open files using the terminal and IINA use the following command:
 
 open -a IINA name_file.avi 
 
