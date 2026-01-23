@@ -9,6 +9,16 @@ Template to understand the format of the videos:
 -  The file is named after #.RB etc for example:
 - (1st video) Good right intubation is:   1.RG.avi
 
+
+// to convert the videos into images (frames) please use the command, if confused use this webstie:
+https://github.com/wkentaro/labelme/blob/main/examples/video_annotation/README.md 
+
+video-toimg nameofvideo.avi 
+
+to open files using the terminal and IINA use the following command:
+
+open -a IINA name_file.avi 
+
 Current List: (12 Good/ 9 Bad)
 
 1.	Right side (performer) good 
