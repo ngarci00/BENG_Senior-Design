@@ -19,11 +19,17 @@ video-toimg nameofvideo.avi
 
 source .venv/bin/activate
 
---- then the line above ( video-toimg nameofvideo.avi )
+--- then the line above ( video-toimg nameofvideo.avi ) ---
 
 --> To open files using the terminal and IINA use the following command:
 
 open -a IINA name_file.avi 
+
+--> STEPS TO TURN JSON FILES INTO VIEWABLE VIDEOS:
+1. Run the script "normrectangles.py" in the terminal ex: python3 normrectangles.py "input_folder"
+2. Run the command: labelmetk json-to-visualization "input_folder" -- this should produce a folder with a .export at the end
+3. Run the following command to turn the frames into a video: video-fromimg -i "name_file.export/*/visualization.jpg" --fps 30 output_file.mp4
+--------
 
 Current List: (12 Good/ 9 Bad) <- please update as we add more videos 
 
