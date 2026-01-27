@@ -6,6 +6,12 @@ Template to understand the format of the videos:
 - MG (Middle-side Good) 
 - MB (Middle-side Bad)
  
+- Need to also add: 
+    - t_attempt_start
+    - t_vocal_cords_visible (fully visible)
+    - t_tube_pass (between the black lines as taught)
+    - t_attempt_end
+
 -  The file is named after #.RB etc for example:
 - (1st video) Good right intubation is:   1.RG.avi
 
