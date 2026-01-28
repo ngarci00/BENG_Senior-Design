@@ -19,7 +19,7 @@ Template to understand the format of the videos:
 // to convert the videos into images (frames) please use the command, if confused use this webstie:
 https://github.com/wkentaro/labelme/blob/main/examples/video_annotation/README.md 
 
-video-toimg nameofvideo.avi 
+video-toimg nameofvideo.avi
 
 --> If for some reason the command doesn't work please use the following command to force the path to be using the .venv folder
 
