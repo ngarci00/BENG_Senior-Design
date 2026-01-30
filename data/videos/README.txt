@@ -43,29 +43,29 @@ Current List: (12 Good/ 9 Bad) <- please update as we add more videos
 2.	Middle (performer) good
 3.	Left (p) good
 4.	Right (p… right is better?) bad 
-1.	Nor far enough 
+    1.	Nor far enough 
 5.	Middle good
-1.	Hit vocals 
+    1.	Hit vocals 
 6.	Right … good 
 7.	Bad glidescope insert…. Tube inserted into esophagus 
 8.	Middle … bad … tube in the esophagus 
 9.	Identifying epiglottis (contains perfect view) --> OMIT
-1.	Halfway to see it 
+    1.	Halfway to see it 
 10.	Middle angle… bad… hitting epiglottis 
 11.	Middle good 
 12.	Middle bad … glidescope too deep and inserted into stomach 
 13.	Middle… bad (deciding which angle is best) multiple attempts and inserted into stomach 
-1.	Middle angle makes you miss seeing epiglottis
+    1.	Middle angle makes you miss seeing epiglottis
 14.	Right angle (tongue less in the way) good 
 15.	Left angle g… bad visualization 
 16.	Right… bad.. difficult insertion 
 17.	Right … bad … difficult insertion 
 18.	Right … good 
 19.	Left … good 
-1.	Metal (styleates???) should not be visible past tube 
+    1.	Metal (styleates???) should not be visible past tube 
 20.	Middle … good ? (Hit wall between esophagus and vocal cords) blade angled to the left so that the tube could be inserted easier 
 21.	Right… good… faster… tube can be inserted straight instead of at an angle 
 22.	Right … good… educational explanations happening during video --> OMIT
 23.	Right… good (long video) 
 24.	
-== Current plan, use CV to train 20, test on 1.
+== Current plan, use K-fold CrossValidation to train 20, test on K 
