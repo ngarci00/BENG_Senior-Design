@@ -70,15 +70,18 @@ def main():
         if len(frames) == 0:
             raise ValueError(f"No frames found in directory: {frames_dir}")
         
-        #Sanity check: Ensure each frame has a corresponding annotation file
+        # Option 2: Not every frame must be annotated. Keep only frames that have a matching JSON.
         annotated_frames = []
         for fn in frames:
             jf = video_ann_dir / (Path(fn).stem + ".json")
-            if not jf.exists():
-                annotated_frames.append(jf)
-            
+            if jf.exists():
+                annotated_frames.append(fn)
+
         if len(annotated_frames) == 0:
-            raise RuntimeError(f"No annotated frames found for video")
+            raise RuntimeError(
+                f"No annotation JSON files found for video {video_id} in {video_ann_dir}. "
+                f"Expected files like 00000000.json matching frame stems."
+            )
         
         items.append({
             "video_id": video_id,
