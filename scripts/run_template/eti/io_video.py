@@ -1,7 +1,7 @@
 #Video decoding and encoding functions for ETI template
 from __future__ import annotations
 import os
-from typing import Tuple
+from typing import Dict, Tuple, Union, Optional
 import torch
 import torch.nn.functional as F
 from torchvision.io import read_video #For reading videos using torchvision

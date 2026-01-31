@@ -6,17 +6,16 @@ import torch #PyTorch library
 DEFAULT_LABELS: Dict[str,int] = { "background": 0,
                                   "vocal_cords": 1,
                                     "epiglottis": 2, 
-                                    "arytenoid_left": 3,
-                                      "arytenoid_right": 4, 
-                                      "esophagus": 5, 
-                                      "endotracheal_tube": 6 } #These are the data labels we want to stick to <-
+                                    "arytenoids": 3,
+                                      "esophagus": 4, 
+                                      "endotracheal_tube": 5 } #These are the data labels we want to stick to <-
 #Exclude background from the number of classes
 CLIP_LABELS: List[str] = [ name for name, idx in sorted(DEFAULT_LABELS.items(), key=lambda kv: kv[1])
     if idx != 0
 ]# List of labels excluding background
 NUM_CLASSES = len(CLIP_LABELS) #Number of classes excluding background
 
-NUM_FRAMES = 16#Number of frames per video clip
+NUM_FRAMES = 16 #Number of frames per video clip
 RESIZE_HEIGHT =  (112,112) #Height to resize video frames
 
 def dict_to_tensor(presence:dict) -> torch.Tensor:
