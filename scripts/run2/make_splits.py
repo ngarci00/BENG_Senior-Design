@@ -18,7 +18,7 @@ def main(k=5, seed=42): #k-fold of 5, seed is used for reproducibility, meaning 
 
         OUT_SPLITS.parent.mkdir(parents=True, exist_ok=True)
         OUT_SPLITS.write_text(json.dumps(splits, indent=2))
-        print(f"Splits saved to {OUT_SPLITS}, wiht {k} folds.")
+        print(f"Splits saved to {OUT_SPLITS}, with {k} folds.")
 
 if __name__ == "__main__":
     main()
