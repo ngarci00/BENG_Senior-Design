@@ -12,9 +12,7 @@ from torch.utils.data import DataLoader
 from dataset import VideoClipDataset, load_image
 
 
-# -------------------------
 # Model
-# -------------------------
 
 def build_3dcnn(num_classes: int = 1) -> nn.Module:
     """Build a 3D CNN (r3d_18) with a binary head.
@@ -43,11 +41,7 @@ def build_3dcnn(num_classes: int = 1) -> nn.Module:
             "Failed to build torchvision r3d_18. Ensure torchvision is installed and supports video models."
         ) from e
 
-
-# -------------------------
-# Metrics (no sklearn needed)
-# -------------------------
-
+# Metrics computation
 def _safe_div(a: float, b: float) -> float:
     return float(a / b) if b != 0 else 0.0
 
@@ -68,6 +62,7 @@ def classification_metrics(y_true: List[int], y_pred: List[int]) -> Dict[str, fl
     precision = _safe_div(tp, tp + fp)
     recall = _safe_div(tp, tp + fn)  # sensitivity for PASS class
     specificity = _safe_div(tn, tn + fp)
+    balanced_accuracy = 0.5 * (recall + specificity)
     f1 = _safe_div(2 * precision * recall, precision + recall)
 
     return {
@@ -75,14 +70,12 @@ def classification_metrics(y_true: List[int], y_pred: List[int]) -> Dict[str, fl
         "precision": precision,
         "recall": recall,
         "specificity": specificity,
+        "balanced_accuracy": balanced_accuracy,
         "f1": f1,
         **c,
     }
 
-
-# -------------------------
 # Video-level evaluation (multi-clip aggregation)
-# -------------------------
 
 @torch.no_grad()
 def predict_video_probability(
@@ -161,10 +154,7 @@ def evaluate_fold(
 
     return classification_metrics(y_true, y_pred)
 
-
-# -------------------------
 # Training
-# -------------------------
 
 def train_one_fold(
     fold: int,
@@ -201,9 +191,22 @@ def train_one_fold(
         pin_memory=torch.cuda.is_available(),
     )
 
+    # ---- class-balanced weights computed from TRAIN videos (video-level) ----
+    n_pos = sum(int(v["label"]) == 1 for v in ds_train.videos)  # PASS
+    n_neg = sum(int(v["label"]) == 0 for v in ds_train.videos)  # FAIL
+    n_total = n_pos + n_neg
+    if n_pos == 0 or n_neg == 0:
+        raise RuntimeError(f"Fold {fold}: degenerate train split (PASS={n_pos}, FAIL={n_neg}).")
+
+    # Balanced weights: each class contributes equally to loss
+    w_pos = n_total / (2.0 * n_pos)
+    w_neg = n_total / (2.0 * n_neg)
+
+    print(f"[fold {fold}] train balance PASS={n_pos}, FAIL={n_neg}, w_pos={w_pos:.3f}, w_neg={w_neg:.3f}")
+
     model = build_3dcnn(num_classes=1).to(device)
 
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.BCEWithLogitsLoss(reduction="none")
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 
     best_f1 = -1.0
@@ -218,7 +221,15 @@ def train_one_fold(
             y = y.float().to(device).view(-1, 1)  # (B,1)
 
             logits = model(x)  # (B,1)
-            loss = criterion(logits, y)
+
+            # Per-sample weighting (PASS vs FAIL) to counter PASS-collapse
+            loss_raw = criterion(logits, y)  # (B,1)
+            weights = torch.where(
+                y == 1,
+                torch.tensor(w_pos, device=device, dtype=loss_raw.dtype),
+                torch.tensor(w_neg, device=device, dtype=loss_raw.dtype),
+            )
+            loss = (loss_raw * weights).mean()
 
             opt.zero_grad(set_to_none=True)
             loss.backward()
@@ -241,8 +252,10 @@ def train_one_fold(
 
         print(
             f"[fold {fold}] epoch {epoch:02d}/{epochs} "
-            f"loss={train_loss:.4f} val_f1={metrics['f1']:.3f} "
-            f"acc={metrics['accuracy']:.3f} (tp={metrics['tp']} tn={metrics['tn']} fp={metrics['fp']} fn={metrics['fn']})"
+            f"loss={train_loss:.4f} "
+            f"val_balacc={metrics['balanced_accuracy']:.3f} val_f1={metrics['f1']:.3f} "
+            f"acc={metrics['accuracy']:.3f} "
+            f"(tp={metrics['tp']} tn={metrics['tn']} fp={metrics['fp']} fn={metrics['fn']})"
         )
 
         # Persist best model by F1
@@ -309,8 +322,8 @@ def main() -> None:
         )
         all_fold_metrics[fold_key] = m
 
-    # Summary mean/std
-    keys = ["accuracy", "precision", "recall", "specificity", "f1"]
+    #Summary Statistics
+    keys = ["accuracy", "balanced_accuracy", "precision", "recall", "specificity", "f1"]
     summary: Dict[str, Dict[str, float]] = {}
 
     for k in keys:
