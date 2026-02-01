@@ -36,7 +36,7 @@ class VideoClipDataset(Dataset):
         self.clip_len = int(clip_len)
         self.resize_hw = resize_hw
         self.clips_per_video = int(clips_per_video)
-        self.use_only_annotated_frames = bool(use_only_annotated_frames)
+        self.use_only_annotated_frames = bool(only_annotated_frames)
         self.seed = int(seed)
 
         items = json.loads(self.index_json.read_text())
@@ -115,9 +115,21 @@ class VideoClipDataset(Dataset):
             img_path = frames_dir / fn
             if not img_path.exists():
                 raise FileNotFoundError(f"{video_id}: missing frame {img_path}")
-            clip.append(_load_image_rgb(img_path, self.resize_hw))
+            clip.append(load_image(img_path, self.resize_hw))
 
         # Stack to (T, C, H, W) -> (C, T, H, W)
         x = torch.stack(clip, dim=0).permute(1, 0, 2, 3).contiguous()
 
         return x, torch.tensor(y, dtype=torch.long), video_id
+    
+#Sanity Check! This should show us the shape of the tensor clips along with their labels and video ids. 
+#Example: a tensor([1,1]) should have a matching video of (PASS, PASS) if both videos are labeled as 1.
+#& a tensor([1,0]) should have a matching video of (PASS, FAIL) if one video is labeled as 1 and the other as 0 !
+from torch.utils.data import DataLoader
+from dataset import VideoClipDataset
+
+ds = VideoClipDataset(fold=0, split="train", clip_len=16, resize_hw=(112,112), clips_per_video=2)
+dl = DataLoader(ds, batch_size=2, shuffle=True, num_workers=0)
+
+x, y, vid = next(iter(dl))
+print(x.shape, y, vid)  # Expected output: torch.Size([2, 3, 16, 112, 112]) tensor([...]) ('video_id1', 'video_id2')
