@@ -1,0 +1,81 @@
+{
+  "folds": {
+    "fold_0": {
+      "accuracy": 0.6,
+      "precision": 0.6,
+      "recall": 1.0,
+      "specificity": 0.0,
+      "f1": 0.7499999999999999,
+      "tp": 3,
+      "tn": 0,
+      "fp": 2,
+      "fn": 0
+    },
+    "fold_1": {
+      "accuracy": 0.75,
+      "precision": 0.75,
+      "recall": 1.0,
+      "specificity": 0.0,
+      "f1": 0.8571428571428571,
+      "tp": 3,
+      "tn": 0,
+      "fp": 1,
+      "fn": 0
+    },
+    "fold_2": {
+      "accuracy": 0.5,
+      "precision": 0.5,
+      "recall": 1.0,
+      "specificity": 0.0,
+      "f1": 0.6666666666666666,
+      "tp": 2,
+      "tn": 0,
+      "fp": 2,
+      "fn": 0
+    },
+    "fold_3": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "specificity": 1.0,
+      "f1": 1.0,
+      "tp": 2,
+      "tn": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "fold_4": {
+      "accuracy": 0.5,
+      "precision": 0.5,
+      "recall": 1.0,
+      "specificity": 0.0,
+      "f1": 0.6666666666666666,
+      "tp": 2,
+      "tn": 0,
+      "fp": 2,
+      "fn": 0
+    }
+  },
+  "summary": {
+    "accuracy": {
+      "mean": 0.67,
+      "std": 0.21095023109728986
+    },
+    "precision": {
+      "mean": 0.67,
+      "std": 0.21095023109728986
+    },
+    "recall": {
+      "mean": 1.0,
+      "std": 0.0
+    },
+    "specificity": {
+      "mean": 0.2,
+      "std": 0.447213595499958
+    },
+    "f1": {
+      "mean": 0.7880952380952381,
+      "std": 0.14196147795965566
+    }
+  }
+}

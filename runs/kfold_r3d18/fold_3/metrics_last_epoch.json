@@ -1,0 +1,13 @@
+{
+  "epoch": 10,
+  "train_loss": 0.6338552088421934,
+  "accuracy": 0.75,
+  "precision": 0.6666666666666666,
+  "recall": 1.0,
+  "specificity": 0.5,
+  "f1": 0.8,
+  "tp": 2,
+  "tn": 1,
+  "fp": 1,
+  "fn": 0
+}
