@@ -3,6 +3,7 @@
   "precision": 1.0,
   "recall": 1.0,
   "specificity": 1.0,
+  "balanced_accuracy": 1.0,
   "f1": 1.0,
   "tp": 2,
   "tn": 2,

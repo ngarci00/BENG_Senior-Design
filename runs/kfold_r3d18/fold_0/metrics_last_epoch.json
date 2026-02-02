@@ -1,13 +1,14 @@
 {
   "epoch": 10,
-  "train_loss": 0.5156836776295677,
+  "train_loss": 0.5932091541122645,
   "accuracy": 0.4,
-  "precision": 0.5,
-  "recall": 0.3333333333333333,
-  "specificity": 0.5,
-  "f1": 0.4,
-  "tp": 1,
-  "tn": 1,
-  "fp": 1,
-  "fn": 2
+  "precision": 0.0,
+  "recall": 0.0,
+  "specificity": 1.0,
+  "balanced_accuracy": 0.5,
+  "f1": 0.0,
+  "tp": 0,
+  "tn": 2,
+  "fp": 0,
+  "fn": 3
 }

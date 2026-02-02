@@ -5,6 +5,7 @@
       "precision": 0.6,
       "recall": 1.0,
       "specificity": 0.0,
+      "balanced_accuracy": 0.5,
       "f1": 0.7499999999999999,
       "tp": 3,
       "tn": 0,
@@ -16,6 +17,7 @@
       "precision": 0.75,
       "recall": 1.0,
       "specificity": 0.0,
+      "balanced_accuracy": 0.5,
       "f1": 0.8571428571428571,
       "tp": 3,
       "tn": 0,
@@ -27,6 +29,7 @@
       "precision": 0.5,
       "recall": 1.0,
       "specificity": 0.0,
+      "balanced_accuracy": 0.5,
       "f1": 0.6666666666666666,
       "tp": 2,
       "tn": 0,
@@ -38,6 +41,7 @@
       "precision": 1.0,
       "recall": 1.0,
       "specificity": 1.0,
+      "balanced_accuracy": 1.0,
       "f1": 1.0,
       "tp": 2,
       "tn": 2,
@@ -49,6 +53,7 @@
       "precision": 0.5,
       "recall": 1.0,
       "specificity": 0.0,
+      "balanced_accuracy": 0.5,
       "f1": 0.6666666666666666,
       "tp": 2,
       "tn": 0,
@@ -60,6 +65,10 @@
     "accuracy": {
       "mean": 0.67,
       "std": 0.21095023109728986
+    },
+    "balanced_accuracy": {
+      "mean": 0.6,
+      "std": 0.22360679774997896
     },
     "precision": {
       "mean": 0.67,

@@ -29,9 +29,9 @@ def build_3dcnn(num_classes: int = 1) -> nn.Module:
             model = r3d_18(weights=weights)
         except Exception:
             try:
-                model = r3d_18(pretrained=True)
+                model = r3d_18(weights=True)
             except Exception:
-                model = r3d_18(pretrained=False)
+                model = r3d_18(weights=False)
 
         in_features = model.fc.in_features
         model.fc = nn.Linear(in_features, num_classes)
@@ -339,7 +339,6 @@ def main() -> None:
 
     print("K-fold summary:")
     print(json.dumps(summary, indent=2))
-
 
 if __name__ == "__main__":
     main()
