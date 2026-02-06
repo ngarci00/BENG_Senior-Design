@@ -67,5 +67,39 @@ Current List: (12 Good/ 9 Bad) <- please update as we add more videos
 21.	Right… good… faster… tube can be inserted straight instead of at an angle 
 22.	Right … good… educational explanations happening during video --> OMIT
 23.	Right… good (long video) 
-24.	
+24.	Right... bad (fail)
+25. Right... bad (didn't see vocal cords?)
+26. Right... bad (fail)
+27. Right... bad 
+28. Center... bad (no visual of vocal cords -- blind insertion)
+29. Center... bad 
+30. Center... bad (too deep)
+31. Moving around./no clear angle... bad
+32. Upside down... bad
+33. Right... bad (tube never passed through cords - trauma inducing)
+34. Middle...bad
+35. Right... bad
+36. Left... bad
+37. ... bad
+38. Center... bad (difficult to find view)
+39. Left... bad (bad view)
+-- 13 good from here on
+40. Right... good
+41. Middle... good
+42. Right... good
+43. Right... good
+44. Right... good
+45. Middle... good (some talking during)
+46. ... good
+47. Middle...good
+48. Right/middle... good
+49. Right/middle... good
+50. ...good
+51. ...good 
+52. Middle...good (slow)
+
+extra
+53. Right... bad (no visualization of vocal cords, lots of moving)
+54. Middle... good 
+
 == Current plan, use K-fold CrossValidation to train 20, test on K 
