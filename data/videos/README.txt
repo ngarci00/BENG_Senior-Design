@@ -38,7 +38,7 @@ open -a IINA name_file.avi
 --------
 
 Current List: (12 Good/ 9 Bad) <- please update as we add more videos 
-
+--- Taken 1/21 ---
 1.	Right side (performer) good 
 2.	Middle (performer) good
 3.	Left (p) good
@@ -67,6 +67,7 @@ Current List: (12 Good/ 9 Bad) <- please update as we add more videos
 21.	Right… good… faster… tube can be inserted straight instead of at an angle 
 22.	Right … good… educational explanations happening during video --> OMIT
 23.	Right… good (long video) 
+---- Taken Date: 2/6 ----
 24.	Right... bad (fail)
 25. Right... bad (didn't see vocal cords?)
 26. Right... bad (fail)
@@ -90,12 +91,12 @@ Current List: (12 Good/ 9 Bad) <- please update as we add more videos
 43. Right... good
 44. Right... good
 45. Middle... good (some talking during)
-46. ... good
+46. Right... good
 47. Middle...good
 48. Right/middle... good
 49. Right/middle... good
-50. ...good
-51. ...good 
+50. Right...good
+51. Right...good 
 52. Middle...good (slow)
 
 extra
