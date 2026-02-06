@@ -87,7 +87,7 @@ Current List: (12 Good/ 9 Bad) <- please update as we add more videos
 -- 13 good from here on
 40. Right... good
 41. Middle... good
-42. Right... good
+42. Right... good (7 seconds)
 43. Right... good
 44. Right... good
 45. Middle... good (some talking during)
