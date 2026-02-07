@@ -4,3 +4,7 @@ __pycache__/
 *.dylib
 .DS_Store
 **/.DS_Store
+.venv/
+venv/
+__pycache__/
+*.dylib
