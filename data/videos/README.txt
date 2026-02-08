@@ -103,4 +103,6 @@ extra
 53. Right... bad (no visualization of vocal cords, lots of moving)
 54. Middle... good 
 
-== Current plan, use K-fold CrossValidation to train 20, test on K 
+---> Regarding raw_videos and frames created, please do all so locally. videos should be in the Google Drive Folder 
+
+
