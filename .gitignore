@@ -9,7 +9,6 @@ __pycache__/
 
 # Large data (DO NOT VERSION)
 data/videos/raw_videos/
-data/videos/polygon_label_videos/
 data/videos/rectangle_label_videos/**/frames/
 **/*.avi
 **/*.mp4
