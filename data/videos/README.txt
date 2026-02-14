@@ -15,6 +15,13 @@ Template to understand the format of the videos:
 -  The file is named after #.RB etc for example:
 - (1st video) Good right intubation is:   1.RG.avi
 
+ // LABEL NAMES KEEP CONSISTANT ///
+
+endotracheal_tube
+vocal_cords
+arytenoids
+esophagus 
+/////////
 
 // to convert the videos into images (frames) please use the command, if confused use this webstie:
 https://github.com/wkentaro/labelme/blob/main/examples/video_annotation/README.md 
