@@ -19,6 +19,24 @@
       "shape_type": "rectangle",
       "flags": {},
       "mask": null
+    },
+    {
+      "label": "epiglottis",
+      "points": [
+        [
+          694.8245614035087,
+          285.0
+        ],
+        [
+          478.15789473684185,
+          213.94736842105235
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
     }
   ],
   "imagePath": "../../../raw_videos/24.RB/00000440.jpg",
