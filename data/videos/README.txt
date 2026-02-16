@@ -77,7 +77,7 @@ Current List: (12 Good/ 9 Bad) <- please update as we add more videos
 ---- Taken Date: 2/6 ----
 24.	Right... bad (fail)
 25. Right... bad (didn't see vocal cords?)
-26. Right... bad (fail)
+26. Right... bad (fail) <- Rectangle videos labeled so far  (nico)
 27. Right... bad 
 28. Center... bad (no visual of vocal cords -- blind insertion)
 29. Center... bad 
