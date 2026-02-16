@@ -16,7 +16,8 @@ Template to understand the format of the videos:
 - (1st video) Good right intubation is:   1.RG.avi
 
  // LABEL NAMES KEEP CONSISTANT ///
-
+ 
+epiglottis
 endotracheal_tube
 vocal_cords
 arytenoids
