@@ -1,6 +1,7 @@
 # Environments
 .venv/
 venv/
+.vscode/
 __pycache__/
 
 # OS junk

@@ -50,11 +50,11 @@ def main():
 
     items = []
     for video_id, y in labels.items():
-        # Annotations live under rectangle_label_videos/PASS|FAIL/<video_id>
+        #Annotations live under rectangle_label_videos/PASS|FAIL/<video_id>
         cls = "PASS" if y == 1 else "FAIL"
         video_ann_dir = ann_dir / cls / video_id
 
-        # Frames can be either raw_videos/<video_id>/... OR raw_videos/PASS|FAIL/<video_id>/...
+        #Frames can be either raw_videos/<video_id>/... OR raw_videos/PASS|FAIL/<video_id>/...
         frames_dir = raw_dir / video_id
         candidate = raw_dir / cls / video_id
         if candidate.exists():
@@ -70,7 +70,7 @@ def main():
         if len(frames) == 0:
             raise ValueError(f"No frames found in directory: {frames_dir}")
         
-        # Option 2: Not every frame must be annotated. Keep only frames that have a matching JSON.
+        #Option 2: Not every frame must be annotated. Keep only frames that have a matching JSON.
         annotated_frames = []
         for fn in frames:
             jf = video_ann_dir / (Path(fn).stem + ".json")
