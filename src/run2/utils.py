@@ -24,6 +24,7 @@ def save_model(epoch, model, optimizer, criterion, save_path, name):
         'optimizer_state_dict': optimizer.state_dict(),
         'criterion_state_dict': criterion.state_dict()
     }, os.path.join(save_path, name))
+    
 def save_plots(train_acc,valid_acc,train_loss,valid_loss,save_path):
     #Accuracy Plots
     plt.figure(figsize=(10, 7))
@@ -36,7 +37,7 @@ def save_plots(train_acc,valid_acc,train_loss,valid_loss,save_path):
     plt.legend()
     plt.savefig(os.path.join(save_path, 'accuracy_plots.png'))
     plt.close()
-    
+
     #Loss Plots
     plt.subplot(1, 2, 2)
     plt.plot(train_loss, label='Train Loss')
