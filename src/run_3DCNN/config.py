@@ -6,7 +6,7 @@ INT_TO_LABEL = {0: 'FAIL', 1: 'PASS'} #Integer to label mapping
 
 #Data paths:
 data_dir = os.path.join("data", "videos") #Base directory for video data
-raw_frames_dir = os.path.join(data_dir, "raw_frames") #Directory for raw video frames
+raw_frames_dir = os.path.join(data_dir, "raw_videos") #Directory for raw video frames
 ann_dir = os.path.join(data_dir, "rectangle_label_videos") #Directory for annotation JSON files <- change to polygon_label_videos if using polygon annotations
 
 index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
