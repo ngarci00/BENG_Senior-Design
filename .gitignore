@@ -17,4 +17,5 @@ data/videos/rectangle_label_videos/**/frames/
 # Training artifacts
 runs/run_*/fold_*/
 runs/run_*/*.json
+runs/run_*/fold_0
 figs/
