@@ -34,11 +34,11 @@ class VideoClipDataset(torch.utils.data.Dataset):
     def _get_frame_list(self, video_id): #Gets the list of frames for a given video_id
         m = self.meta[video_id]
         if use_only_annotated_frames:
-            frames = m.get("annotated_frames", [])
+            frames = m.get("annotated_frame_names", [])
             if len(frames) == 0: #If there are no annotated frames, fall back to using all frames
-                frames = m["frames"]
+                frames = m.get["frames_names", []]
         else:
-            frames = m.get("frames", [])
+            frames = m.get("frames_names", [])
         return frames
     
     def _sample_clip(self,frames,rng):#Samples a clip of len(clip_len) from the list of frames, using a random number generator rng
