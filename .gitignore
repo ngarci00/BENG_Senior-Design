@@ -15,5 +15,5 @@ data/videos/rectangle_label_videos/**/frames/
 **/*.mp4
 
 # Training artifacts
-# runs/
-# figs/
+runs/
+figs/
