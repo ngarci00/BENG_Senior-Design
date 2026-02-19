@@ -83,7 +83,7 @@ class VideoClipDataset(torch.utils.data.Dataset):
         x2 = F.interpolate(x2, size=resize_hw, mode='bilinear', align_corners=False) #Resize the frames
         x2 = x2.permute(1,0,2,3).contiguous() #Permute back to (T,C,H,W) and make it contiguous in memory
         
-        return x, y, video_id #Return the clip tensor, label, and video_id for the given index
+        return x2, y, video_id #Return the clip tensor, label, and video_id for the given index
 
 if __name__ == "__main__": #Test the dataset by creating an instance and getting a sample
     dataset = VideoClipDataset(fold=0, split="train", clip_len=16, clips_per_video=1)
