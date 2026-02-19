@@ -1,5 +1,4 @@
-import torch
-import torch.nn as nn
+import torch, torch.nn as nn
 from torchvision.models import r3d_18, R3D_18_Weights
 from config import use_pretrained_model
 #Baseline 3D CNN model using ResNet-18 architecture for video classification, adapted for our specific task of classifying normal vs. abnormal videos.
