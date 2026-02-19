@@ -21,13 +21,32 @@ def train_3dcnn(fold,device):
     #num_workers refers to the number of subprocesses to use for data loading. 0 means that the data will be loaded in the main process.
     #if we increase num_workers, it can speed up data loading by using multiple subprocesses, but it may also increase memory usage.
 
-    model = build_model().to(device)#build the 3D CNN model and move it to the specified device (CPU or GPU)
-    criterion = nn.BCEWithLogitsLoss()#define the loss function (Binary Cross Entropy with Logits)
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)#here we define the optimizer (Adam)
+    model = build_model().to(device) #build the 3D CNN model and move it to the specified device (CPU or GPU)
+    criterion_bce = nn.BCEWithLogitsLoss() #define the loss function (Binary Cross Entropy with Logits)
+    criterion_ce = nn.CrossEntropyLoss() #define the loss function (Cross Entropy Loss)
+    #BCEWithLogitsLoss is used for binary classification tasks, while CrossEntropyLoss is used for multi-class classification tasks.
+    #Our application only needs binary classification but we have both as a fallback in case we want to experiment with multi-class classification in the future.
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay) #here we define the optimizer (Adam)
     #the optimizer will update the model parameters based on the computed gradients during training.
     #adam is commonly used for training deep learning models because it adapts the learning rate for each parameter!
 
+    def _is_two_class_logits(t: "torch.Tensor") -> bool:
+        return t.ndim == 2 and t.size(1) == 2
     
+    def _compute_loss(logits: "torch.Tensor", y: "torch.Tensor") -> "torch.Tensor":
+        if _is_two_class_logits(logits):
+            return criterion_ce(logits, y.long())#if the logits are for two classes, use cross entropy loss
+        else:
+            return criterion_bce(logits.squeeze(-1), y.float())#if the logits are for binary classification, use binary cross entropy loss
+        
+    def _positive_logit(logits: "torch.Tensor") -> "torch.Tensor":
+        if _is_two_class_logits(logits):
+            return logits[:, 1]#if the logits are for two classes, return the logits for the positive class
+        else:
+            return logits.squeeze(-1)#if the logits are for binary classification, return the logits as is
+
+
     best_f1_score = -1#initialize the best F1 score to -1 being the lowest possible value
     best_val_accuracy = 0#initialize the best validation accuracy to 0
     best_path = os.path.join(output_dir, "best_model.pt")#define the path to save the best model
@@ -43,7 +62,7 @@ def train_3dcnn(fold,device):
             y = y.to(device)#move the labels to the specified device
 
             logits = model(x)#forward pass: passes the input data through the model to get teh output logits
-            loss = criterion(logits, y.float())#compute the loss by comparing the logits with true labels y
+            loss = _compute_loss(logits, y) #compute the loss by comparing the logits with true labels y
 
             optimizer.zero_grad()#zero the gradients before backpropagation
             loss.backward()#backpropagation: compute the gradients of the loss with respect to the model parameters
@@ -69,8 +88,8 @@ def train_3dcnn(fold,device):
         #concatenating means that we are combining all the logits from different batches into a single tensor
         targets = torch.cat(all_targets, dim=0)#concatenate all the targets along the batch dimension
 
-        metrics = compute_binary_metrics(logits, targets)#compute the binary classification metrics using the logits and targets
-        val_accuracy = metrics["accuracy"]#extract the validation accuracy from the computed metrics
+        metrics = compute_binary_metrics(_positive_logit(logits), targets) #compute the binary classification metrics using the logits and targets
+        val_accuracy = metrics["accuracy"] #extract the validation accuracy from the computed metrics
 
         #Some summary prints for the current epoch:
         print(f"[Fold {fold}, Epoch {epoch:02d}/{epochs}]")
