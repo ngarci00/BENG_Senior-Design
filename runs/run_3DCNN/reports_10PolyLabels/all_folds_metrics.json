@@ -1,0 +1,47 @@
+[
+  {
+    "fold": 0.0,
+    "n_videos": 4.0,
+    "accuracy": 0.5,
+    "bal_accuracy": 0.5,
+    "f1_score": 0.6666666666666666,
+    "precision": 0.5,
+    "recall": 1.0,
+    "tp": 2.0,
+    "tn": 0.0,
+    "fp": 2.0,
+    "fn": 0.0,
+    "roc_auc": 0.5,
+    "pr_auc": 0.7083333333333333
+  },
+  {
+    "fold": 1.0,
+    "n_videos": 3.0,
+    "accuracy": 0.6666666666666666,
+    "bal_accuracy": 0.5,
+    "f1_score": 0.8,
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "tp": 2.0,
+    "tn": 0.0,
+    "fp": 1.0,
+    "fn": 0.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0
+  },
+  {
+    "fold": 2.0,
+    "n_videos": 3.0,
+    "accuracy": 0.6666666666666666,
+    "bal_accuracy": 0.75,
+    "f1_score": 0.6666666666666666,
+    "precision": 0.5,
+    "recall": 1.0,
+    "tp": 1.0,
+    "tn": 1.0,
+    "fp": 1.0,
+    "fn": 0.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0
+  }
+]

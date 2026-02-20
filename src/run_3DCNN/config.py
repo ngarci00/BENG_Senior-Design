@@ -7,22 +7,23 @@ INT_TO_LABEL = {0: 'FAIL', 1: 'PASS'} #Integer to label mapping
 #Data paths:
 data_dir = os.path.join("data", "videos") #Base directory for video data
 raw_frames_dir = os.path.join(data_dir, "raw_videos") #Directory for raw video frames
-# ann_dir = os.path.join(data_dir, "rectangle_label_videos") #Directory for annotation JSON files
-ann_dir = os.path.join(data_dir, "polygon_label_videos") #Directory for annotation JSON files #<- change to polygon_label_videos if using polygon annotations
+ann_dir = os.path.join(data_dir, "rectangle_label_videos") #Directory for annotation JSON files
+# ann_dir = os.path.join(data_dir, "polygon_label_videos") #Directory for annotation JSON files #<- change to polygon_label_videos if using polygon annotations
 
-# index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
-index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
-# splits_json_path = os.path.join(data_dir, "splits_rec.json") #Path to splits JSON file for train/val splits
-# splits_json_path = os.path.join(data_dir, "splits_rec_10.json") #<-- Temorary, smaller splits for quick testing
-splits_json_path = os.path.join(data_dir, "splits_poly_10.json") #Path to splits JSON file for train/val splits
+index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
+# index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
+
+# splits_json_path = os.path.join(data_dir, "splits_rec.json") #Path to splits JSON file for train/val splits (all videos)
+splits_json_path = os.path.join(data_dir, "splits_rec_10.json") #<-- Temorary, smaller splits for quick testing (10)
+# splits_json_path = os.path.join(data_dir, "splits_poly_10.json") #Path to splits JSON file for train/val splits
 
 #Output directories:
 runs_path = os.path.join("runs","run_3DCNN") #Base directory for training runs
 
 #Model & Training Parameters:
-kfolds = 5 #Number of folds for cross-validation
+kfolds = 3 #Number of folds for cross-validation
 seed = 42 #Random seed for reproducibility
-epochs = 10 #Number of training epochs
+epochs = 10 #Number of training epochs try: 10,20, 50, 100 HERE <-
 batch_size = 8 #Batch size for training 
 learning_rate = 1e-4 #Learning rate for optimizer also refered to as alpha in some contexts (0.0001) <- Need to play with this value, 
 #as 3D CNNs can be sensitive to learning rate. Start with a small value and adjust based on training stability and convergence.

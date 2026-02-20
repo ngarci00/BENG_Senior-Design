@@ -1,6 +1,0 @@
-biomarker,n_videos_present,acc_when_present,n_videos_absent_or_unknown,acc_when_absent_or_unknown,mean_presence_rate_over_videos,tp_when_present,tn_when_present,fp_when_present,fn_when_present
-vocal_cords,1,1.0,9,0.4444444444444444,0.20031217481789804,1,0,0,0
-epiglottis,1,1.0,9,0.4444444444444444,0.4829222011385199,0,1,0,0
-arytenoids,1,1.0,9,0.4444444444444444,0.2898022892819979,1,0,0,0
-esophagus,1,1.0,9,0.4444444444444444,0.4172736732570239,1,0,0,0
-endotracheal_tube,2,1.0,8,0.375,0.4116728897594418,1,1,0,0

@@ -1,3 +1,0 @@
-fold,video_id,true_label,predicted_label,predicted_prob,logit_mean,n_clips
-4,25.RB,0,1,0.8839244075783056,2.030129909515381,5
-4,50.RG,1,1,0.9370938369748569,2.701139283180237,5

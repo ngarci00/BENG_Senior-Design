@@ -1,3 +1,0 @@
-fold,video_id,true_label,predicted_label,predicted_prob,logit_mean,n_clips
-2,13.MB,0,1,0.5463511358071491,0.18593840301036835,5
-2,3.LG,1,1,0.5338601272383136,0.13564812541007995,5

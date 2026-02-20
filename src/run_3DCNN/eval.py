@@ -207,10 +207,10 @@ def main():
     args = parser.parse_args()
 
     if args.device is None:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        device = "mps" if torch.cuda.is_available() else "cpu"
     else:
         device = args.device.lower()
-        if device not in ["cpu", "cuda"]:
+        if device not in ["cpu", "mps", "cuda"]:
             raise ValueError("Invalid device specified. Use 'CPU' or 'CUDA'.")
             
 

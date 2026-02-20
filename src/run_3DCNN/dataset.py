@@ -37,7 +37,7 @@ class VideoClipDataset(torch.utils.data.Dataset):
             frames = m.get("annotated_frame_names", [])
             #If there are no annotated frames, fall back to using all frames
             if len(frames) == 0: 
-                frames = m.get["frames_names", []]
+                frames = m.get("frames_names", [])
         else:
             frames = m.get("frames_names", [])
         return frames
@@ -49,7 +49,7 @@ class VideoClipDataset(torch.utils.data.Dataset):
             raise RuntimeError("No frames were found for this video!")
         if n < T:
             #padding if there is not enough frames to sample a full clip
-            idxs = list((range(n)) + [n-1]*(T-n))
+            idxs = list(range(n)) + [n-1]*(T-n)
             return [frames[i] for i in idxs]
         
         start = rng.randint(0, n - T)

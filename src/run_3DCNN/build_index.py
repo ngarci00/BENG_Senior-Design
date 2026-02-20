@@ -1,6 +1,4 @@
-import os
-import json
-
+import os, json
 from config import raw_frames_dir, ann_dir, index_json_path, LABEL_TO_INT
 
 IMG_EXTS = (".jpg", ".jpeg", ".png")
