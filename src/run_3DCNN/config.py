@@ -21,7 +21,7 @@ runs_path = os.path.join("runs","run_3DCNN") #Base directory for training runs
 kfolds = 5 #Number of folds for cross-validation
 seed = 42 #Random seed for reproducibility
 epochs = 10 #Number of training epochs
-batch_size = 8 #Batch size for training
+batch_size = 8 #Batch size for training 
 learning_rate = 1e-4 #Learning rate for optimizer also refered to as alpha in some contexts (0.0001) <- Need to play with this value, 
 #as 3D CNNs can be sensitive to learning rate. Start with a small value and adjust based on training stability and convergence.
 weight_decay = 1e-2 #Weight decay for regularization
