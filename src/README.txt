@@ -17,7 +17,7 @@ TO CHECK GO IN THIS ORDER:    ⸜(｡˃ ᵕ ˂ )⸝♡
      T = clip length
      C = 3
      H,W = resise_hw which is (112,112)
-4 -  run.py
+4 - run.py
     main script this will strat the learning on the model. PLEASE make sure other parameters are done before reaching here!
 5 - eval.py 
     statistical analysis script run it after training the model!
