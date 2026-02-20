@@ -257,3 +257,14 @@ def main():
         
 if __name__ == "__main__":
     main()
+
+"""These are the expected outputs after running this script:
+- Per-fld Confusion Matrix Plots
+- ROC Curves
+- Summary Metrics
+1) Accu (acc) : (TP + TN) / Total
+2) Balanced Accuracy (bal_acc) : (TPR + TNR) / 2 helps 
+3) F1 Score (f1) : 2 * (Precision * Recall) / (Precision + Recall)
+4) Precision (prec) : TP / (TP + FP)
+5) Recall (rec) : TP / (TP + FN)
+6) ROC Curve + AUC (roc_auc) : Area under the ROC curve, which plots TPR vs FPR at various thresholds"""

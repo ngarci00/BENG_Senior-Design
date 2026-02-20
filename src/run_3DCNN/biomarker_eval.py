@@ -369,3 +369,10 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+""" Expected outputs after running this script:
+- CSV summaries per fold + overall, e.g.:
+1) Presence Rate: Videos with biomarker present / total videos
+2) Accuracy when present: Correct predictions / total videos with biomarker present
+3) Accuracy when absent/unknown: Correct predictions / total videos without biomarker or unknown presence
+4) Accuracy difference: Accuracy when present - Accuracy when absent/unknown
+5) Misclassification rate when present: Incorrect predictions / total videos with biomarker present"""
