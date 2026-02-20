@@ -261,8 +261,9 @@ if __name__ == "__main__":
 """These are the expected outputs after running this script:
 - Per-fld Confusion Matrix Plots
 - ROC Curves
-- Summary Metrics
-1) Accu (acc) : (TP + TN) / Total
+- Summary Metrics:
+
+1) Accuracy (acc) : (TP + TN) / Total
 2) Balanced Accuracy (bal_acc) : (TPR + TNR) / 2 helps 
 3) F1 Score (f1) : 2 * (Precision * Recall) / (Precision + Recall)
 4) Precision (prec) : TP / (TP + FP)
