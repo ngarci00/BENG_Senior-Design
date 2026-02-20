@@ -1,32 +1,9 @@
 """
 biomarker_eval.py
 
-Post-processing script to quantify model performance stratified by biomarker presence.
+Post-processing script to quantify model performance stratified by biomarker presence..
 
-Goal:
-- For each biomarker (vocal cords, epiglottis, arytenoids, esophagus, tube):
-  - Count videos where the biomarker is present (based on annotation JSONs)
-  - Compute accuracy when present vs absent/unknown
-  - Compute confusion matrix breakdown when present
-  - Export CSV summaries per fold + overall
-
-Assumptions:
-- You already ran training and `eval.py` successfully, producing:
-    <runs_path>/reports/all_folds_metrics.csv   (video-level rows)
-  OR fold-specific files:
-    <runs_path>/reports/fold_<k>_results.csv
-  OR other common aggregate filenames like:
-    all_folds_metrics_by_folds.csv, all_folds_metrics_by_fold.csv, all_folds_results.csv
-
-- Your index JSON (from build_index.py) contains ann_dir per video, e.g.:
-    { "video_id": "...", "ann_dir": ".../rectangle_label_videos/PASS/<vid>", ... }
-
-Run:
-  python src/run_3DCNN/biomarker_eval.py
-Optional:
-  python src/run_3DCNN/biomarker_eval.py --fold 0
 """
-
 import os, json, csv, argparse
 from typing import Dict, List, Optional
 import numpy as np
