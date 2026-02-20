@@ -18,7 +18,7 @@ splits_json_path = os.path.join(data_dir, "splits_rec_10.json") #<-- Temorary, s
 # splits_json_path = os.path.join(data_dir, "splits_poly_10.json") #Path to splits JSON file for train/val splits
 
 #Output directories:
-runs_path = os.path.join("runs","run_3DCNN") #Base directory for training runs
+runs_path = os.path.join("runs","run_2DCNN") #Base directory for training runs
 
 #Model & Training Parameters:
 kfolds = 3 #Number of folds for cross-validation
