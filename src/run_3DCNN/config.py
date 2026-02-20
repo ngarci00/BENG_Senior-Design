@@ -11,7 +11,8 @@ ann_dir = os.path.join(data_dir, "rectangle_label_videos") #Directory for annota
 
 index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
 # index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
-splits_json_path = os.path.join(data_dir, "splits_rec.json") #Path to splits JSON file for train/val splits
+# splits_json_path = os.path.join(data_dir, "splits_rec.json") #Path to splits JSON file for train/val splits
+splits_json_path = os.path.join(data_dir, "splits_rec_10.json") #<-- Temorary, smaller splits for quick testing
 # splits_json_path = os.path.join(data_dir, "splits_poly.json") #Path to splits JSON file for train/val splits
 
 #Output directories:

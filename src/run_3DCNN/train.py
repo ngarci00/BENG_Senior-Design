@@ -6,7 +6,7 @@ from dataset import VideoClipDataset
 from model import build_model
 from utils import set_seed, compute_binary_metrics, ensure_dir_exists
 
-def train_3dcnn(fold,device):
+def train_3dcnn(fold, device):
     set_seed(seed + fold)#set the seed for reproducibility, adding fold to ensure different seeds for different folds
 
     output_dir = os.path.join(runs_path, f"fold_{fold}")#define the output directory for the current fold
@@ -16,6 +16,7 @@ def train_3dcnn(fold,device):
     ds_train = VideoClipDataset(fold=fold, split='train',clip_len=clip_len, clips_per_video=clips_per_video_train)#create the training dataset
     ds_val = VideoClipDataset(fold=fold, split='val',clip_len=clip_len, clips_per_video=clips_per_video_val)#create the validation dataset
 
+    #Create the validation dataset
     dl_train = DataLoader(ds_train, batch_size=batch_size, shuffle=True, num_workers=0)#create the training dataloader 
     dl_val = DataLoader(ds_val, batch_size=batch_size, shuffle=False, num_workers=0)#create the validation dataloader
     #num_workers refers to the number of subprocesses to use for data loading. 0 means that the data will be loaded in the main process.
@@ -116,7 +117,3 @@ def train_3dcnn(fold,device):
     with open(os.path.join(output_dir, "summary.json"), "w") as f:
         json.dump(summary, f, indent=2)
     return summary
-
-
-
-

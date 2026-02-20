@@ -6,7 +6,7 @@ from utils import ensure_dir_exists
 def main():
     ensure_dir_exists(runs_path)#ensure the directory for saving runs exists
 
-    device = "cuda" if torch.cuda.is_available() else "CPU" #set the device to GPU if available, otherwise use CPU
+    device = "mps" if torch.cuda.is_available() else "cpu" #set the device to GPU if available, otherwise use CPU
     print(f"Using device: {device}") #print the device being used
 
     all_summaries = [] #initialize a list to store summaries for all folds
