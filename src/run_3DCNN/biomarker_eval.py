@@ -10,7 +10,7 @@ import numpy as np
 from config import runs_path, kfolds, index_json_path
 
 
-# Biomarkers of interest and their label synonyms (for flexible annotation parsing)
+#Biomarkers of interest and their label synonyms in case we misspelled them during annotation.
 BIOMARKERS = ["vocal_cords", "epiglottis", "arytenoids", "esophagus", "endotracheal_tube"]
 
 _LABEL_SYNONYMS = {
@@ -39,17 +39,17 @@ _LABEL_SYNONYMS = {
     "tube": "endotracheal_tube",
 }
 
-
+#Ensuring the directory for the output CSVs exists:
 def _ensure_dir(path: str) -> None:
     if path:
         os.makedirs(path, exist_ok=True)
 
-
+#Reading our index json file.
 def _read_json(path: str):
     with open(path, "r") as f:
         return json.load(f)
 
-
+#Writing the biomarker/annotation summary to a csv file.
 def _write_csv(path: str, rows: List[Dict]) -> None:
     _ensure_dir(os.path.dirname(path))
     if not rows:
@@ -59,12 +59,12 @@ def _write_csv(path: str, rows: List[Dict]) -> None:
         w.writeheader()
         w.writerows(rows)
 
-
+#Canonicalize label strings to handle common synonyms and misspellings.
 def _canon_label(label: str) -> str:
     s = str(label).strip().lower()
     return _LABEL_SYNONYMS.get(s, s)
 
-
+#Extrating the labels from the annotation json files.
 def _extract_labels_from_ann_json(json_path: str) -> List[str]:
     """
     Supports LabelMe-style:
@@ -76,16 +76,15 @@ def _extract_labels_from_ann_json(json_path: str) -> List[str]:
             data = json.load(f)
     except Exception:
         return []
-
     labels: List[str] = []
 
-    #LabelMe-style
+    #LabelMe-style, which is what we used for annotation in our project. 
     if isinstance(data, dict) and isinstance(data.get("shapes"), list):
         for sh in data["shapes"]:
             if isinstance(sh, dict) and "label" in sh:
                 labels.append(str(sh["label"]))
 
-    # Generic fallback
+    #Generic fallback, in case some annotation files have a different structure:
     if isinstance(data, dict) and isinstance(data.get("annotations"), list):
         for ann in data["annotations"]:
             if isinstance(ann, dict):
@@ -96,7 +95,7 @@ def _extract_labels_from_ann_json(json_path: str) -> List[str]:
                 elif "category_name" in ann:
                     labels.append(str(ann["category_name"]))
 
-    # Flat list fallback
+    #Flat list fallback, in case some annotation files are just a list of labels dicts:
     if isinstance(data, list):
         for ann in data:
             if isinstance(ann, dict) and "label" in ann:
@@ -104,19 +103,21 @@ def _extract_labels_from_ann_json(json_path: str) -> List[str]:
 
     return labels
 
-
+#Computing the presence rate of each biomarker/annotation across the video frames, based ON the annotation json files!
 def _video_presence_rates(ann_dir: Optional[str]) -> Dict[str, float]:
     """
     Presence rate for each biomarker:
       (# JSON frames containing biomarker) / (# JSON frames)
-    """
+    """ 
+    #If no annotation directory or it doesn't exist, we return nan for all biomarkers/annotations
+    #Which defaults to treating them as unknown/absent in the .csv summary output.
     if not ann_dir or not os.path.isdir(ann_dir):
         return {b: float("nan") for b in BIOMARKERS}
 
     json_files = [fn for fn in os.listdir(ann_dir) if fn.lower().endswith(".json")]
     if not json_files:
         return {b: float("nan") for b in BIOMARKERS}
-
+    
     counts = {b: 0 for b in BIOMARKERS}
     total = 0
 
@@ -134,7 +135,7 @@ def _video_presence_rates(ann_dir: Optional[str]) -> Dict[str, float]:
 
     return {b: counts[b] / float(total) for b in BIOMARKERS}
 
-
+#Loading the index.json file to get the annotation directories for each video, which we need to compute the biomarker presense rates.
 def _load_index_by_vid() -> Dict[str, Dict]:
     index_items = _read_json(index_json_path)
     out = {}
@@ -143,20 +144,21 @@ def _load_index_by_vid() -> Dict[str, Dict]:
             out[str(it["video_id"])] = it
     return out
 
-
+#Utility to read csv file into a list of dicts, which is the format we use for the eval outputs and biomarker summaries. 
+#list of dicts is easier to work with for our purpose than pandas DataFrames, and we want to avoid adding more dependencies in post-proc scripts!
 def _read_csv(path: str) -> List[Dict]:
     with open(path, "r", newline="") as f:
         r = csv.DictReader(f)
         return [dict(row) for row in r]
 
-
+#Utilitiy to get the first non-empty value from a list of possible keys in a dict.
 def _get_first_key(row: Dict, keys: List[str], default=None):
     for k in keys:
         if k in row and row[k] not in (None, ""):
             return row[k]
     return default
 
-
+#Main function to load eval outputs, compute biomarker/annotation presence rates, and summarize model performance stratified by biomarker/annotation presence.
 def _load_eval_rows(report_dir: str, fold: Optional[int], results_csv: Optional[str] = None) -> List[Dict]:
     """Load video-level prediction rows produced by eval.py.
 
@@ -166,13 +168,13 @@ def _load_eval_rows(report_dir: str, fold: Optional[int], results_csv: Optional[
       3) fold_<k>_results.csv (single fold)
       4) If fold is None, auto-aggregate all fold_<k>_results.csv files
     """
-    # 1) Explicit override
+    #1) Explicit override
     if results_csv:
         if not os.path.exists(results_csv):
             raise FileNotFoundError(f"Missing results CSV: {results_csv}")
         return _read_csv(results_csv)
 
-    # 2) Common aggregate names
+    #2) Common aggregate names
     if fold is None:
         candidates = [
             "all_folds_metrics.csv",
@@ -185,7 +187,7 @@ def _load_eval_rows(report_dir: str, fold: Optional[int], results_csv: Optional[
             if os.path.exists(path):
                 return _read_csv(path)
 
-    # 3) Single-fold file
+    #3) Single-fold file
     if fold is not None:
         path = os.path.join(report_dir, f"fold_{fold}_results.csv")
         if not os.path.exists(path):
@@ -194,7 +196,7 @@ def _load_eval_rows(report_dir: str, fold: Optional[int], results_csv: Optional[
             )
         return _read_csv(path)
 
-    # 4) Aggregate fold_<k>_results.csv across all folds
+    #4) Aggregate fold_<k>_results.csv across all folds
     rows: List[Dict] = []
     found_any = False
     for k in range(int(kfolds)):
@@ -211,21 +213,21 @@ def _load_eval_rows(report_dir: str, fold: Optional[int], results_csv: Optional[
         )
     return rows
 
-
+#Convert values to int or float with error hanlding, used since some of the output columns might be strings
 def _to_int(x) -> int:
     try:
         return int(float(x))
     except Exception:
         return int(x)
 
-
+#Convert values to float with error handling, used since some of the output columns might be strings
 def _to_float(x) -> float:
     try:
         return float(x)
     except Exception:
         return float("nan")
 
-
+#Core function to summarize biomarker/annotation presense and model performance stratified by biomarker/annotation presence.
 def _summarize_biomarkers(rows: List[Dict], index_by_vid: Dict[str, Dict]) -> List[Dict]:
     """
     rows must include:
@@ -242,6 +244,8 @@ def _summarize_biomarkers(rows: List[Dict], index_by_vid: Dict[str, Dict]) -> Li
         presence[vid] = _video_presence_rates(ann_dir)
 
     out: List[Dict] = []
+#For each biomarker/annotation, we compute # of videos with annotation present, acc when present, # of vid with anotation absent, acc when absent...
+#mean presence rate across vids, and Conf Matrix stats when present.
 
     for b in BIOMARKERS:
         present_total = 0
@@ -257,7 +261,7 @@ def _summarize_biomarkers(rows: List[Dict], index_by_vid: Dict[str, Dict]) -> Li
             yt_raw = _get_first_key(r, ["true_label", "y_true", "label", "target"], default=None)
             yp_raw = _get_first_key(r, ["predicted_label", "y_pred", "pred", "prediction"], default=None)
             if yt_raw is None or yp_raw is None:
-                # If eval rows don’t have the expected columns, skip this row
+                #If eval rows don’t have the expected columns, skip this row
                 continue
             yt = _to_int(yt_raw)
             yp = _to_int(yp_raw)
@@ -302,7 +306,6 @@ def _summarize_biomarkers(rows: List[Dict], index_by_vid: Dict[str, Dict]) -> Li
 
     return out
 
-
 def main() -> None:
     ap = argparse.ArgumentParser(description="Biomarker-stratified post-processing for 3DCNN eval outputs")
     ap.add_argument("--fold", type=int, default=None, help="Evaluate biomarker stats for one fold only.")
@@ -328,10 +331,10 @@ def main() -> None:
 
     index_by_vid = _load_index_by_vid()
 
-    # Load rows
+    #Load rows
     if args.fold is None:
         rows = _load_eval_rows(report_dir, fold=None, results_csv=args.results_csv)
-        # Write overall summary
+        #Write overall summary
         summary = _summarize_biomarkers(rows, index_by_vid)
         out_csv = os.path.join(report_dir, "biomarkers_summary_all.csv")
         _write_csv(out_csv, summary)
