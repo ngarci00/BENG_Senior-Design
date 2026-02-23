@@ -48,9 +48,9 @@ def train_3dcnn(fold, device):
             return logits.squeeze(-1)#if the logits are for binary classification, return the logits as is
 
 
-    best_f1_score = -1#initialize the best F1 score to -1 being the lowest possible value
-    best_val_accuracy = 0#initialize the best validation accuracy to 0
-    best_path = os.path.join(output_dir, "best_model.pt")#define the path to save the best model
+    best_f1_score = 0 #initialize the best F1 score to -1 being the lowest possible value
+    best_val_accuracy = 0 #initialize the best validation accuracy to 0 
+    best_path = os.path.join(output_dir, "best_model.pt") #define the path to save the best model
 
     #Here is the bread and butter; aka the training loop (:
     for epoch in range(1, epochs + 1):
