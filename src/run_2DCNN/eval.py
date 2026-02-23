@@ -2,7 +2,7 @@
 """
 Please make sure you run run.py and save the model before running this script, otherwise it will not work! 
 Alsooo run in terminal with:
-python src/run_3DCNN/eval.py (It should automatically read th best model from each fold and produce statistics and plots in runs/reports/)
+python src/run_3DCNN/eval.py (It should automatically read the best model from each fold and produce statistics and plots in runs/reports/)
 """
 import os, torch, json, csv, argparse, numpy as np, matplotlib.pyplot as plt 
 from sklearn.metrics import (confusion_matrix, accuracy_score, balanced_accuracy_score, f1_score, precision_score, recall_score, roc_curve, auc, precision_recall_curve)
@@ -178,8 +178,8 @@ def _infer_fold(fold: int, device: str, eval_clips_per_video: int, batch_size: i
         prec , rec, _ = precision_recall_curve(y_true, y_prob)
         metrics["pr_auc"] = float(auc(rec, prec))
     else:
-        metrics["roc_auc"] = None
-        metrics["pr_auc"] = None
+        metrics["roc_auc"]  = float(np.nan) #Undefined if only one class is present
+        metrics["pr_auc"] = float(np.nan) #Undefined if only one class is present
     return rows, metrics
 
 def _add_mean_std(metrics: List[Dict]) -> List[Dict]:
@@ -187,8 +187,8 @@ def _add_mean_std(metrics: List[Dict]) -> List[Dict]:
         return [] #No metrics to process
     
     keys = [k for k in metrics[0].keys() if k != "fold"] #Exclude fold from mean/std calculation
-    mean_row = {"fold": "mean"}
-    std_row = {"fold": "std"}
+    mean_row:  dict[str,str | float] = {"fold": "mean"}
+    std_row: dict[str, str | float] = {"fold": "std"}
 
     for k in keys: 
         values = np.array([float(m.get(k, np.nan)) for m in metrics], dtype=float)
