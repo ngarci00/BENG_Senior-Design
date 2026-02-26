@@ -25,6 +25,7 @@ kfolds = 3 #Number of folds for cross-validation
 seed = 42 #Random seed for reproducibility
 epochs = 20 #Number of training epochs try: 20, 50, 100 HERE <-
 batch_size = 16 #Batch size for training <- 2D CNN is lighter than 3D CNN so we can afford a larger batch size
+num_workers = 4 #Number of worker processes for data loading, adjust based system's capabilities
 learning_rate = 1e-4 #Learning rate for optimizer also refered to as alpha in some contexts (0.0001) <- Need to play with this value, 
 #as 3D CNNs can be sensitive to learning rate. Start with a small value and adjust based on training stability and convergence.
 weight_decay = 1e-4 #Weight decay for regularization
