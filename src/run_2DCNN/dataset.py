@@ -1,37 +1,51 @@
 import os, json, random, torch
 import torch.nn.functional as F
 import numpy as np
+from typing import List, Tuple
 from skimage.io import imread
 from skimage.color import gray2rgb
-from config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed
+from config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed, frames_per_video_train, frames_per_video_validation, sample_mode_train, sample_mode_validation
 
 img_extensions = [".jpg", ".jpeg", ".png"]
 
-class VideoClipDataset(torch.utils.data.Dataset):
-    def __init__(self, fold, split, clip_len, clips_per_video,seed=seed):#Initializes the dataset with the specified parameters
+def sample_frame_indices(n: int,k: int, mode: str, rng: random.Random) -> List[int]:
+    """Samples frame indices based on the specified mode."""
+    if n <= 0:
+        raise RuntimeError("No frames were found for this video!")
+    if k <= 1:
+            return [0]
+    mode = (mode or "random").lower()
+    if mode =="unifomrm":
+        if k == 1:
+            return [0]
+        return [int(round(i*(n-1)/(k-1))) for i in range(k)]
+    if n >= k:
+        return rng.sample(range(n), k)
+    return [rng.randrange(n) for _ in range(k)]
+
+class VideoFrameDataset(torch.utils.data.Dataset):
+    def __init__(self, fold: int, split: str, seed: int = seed):
         
-        self.fold = fold
-        self.split = split
-        self.clip_len = int(clip_len)
-        self.clips_per_video = int(clips_per_video)
-        self.seed = seed
+        self.fold = int(fold)
+        self.split = str(split)
+        self.seed = int(seed)
 
         self.index = json.load(open(index_json_path))
         self.splits = json.load(open(splits_json_path))
 
         self.meta = {x["video_id"]: x for x in self.index}
-        self.video_ids = list(self.splits[f"fold_{fold}"][split])#Get the video ids for the specified fold and split
+        self.video_ids = list(self.splits[f"fold_{self.fold}"][self.split]) #Get the video ids for the specified fold and split
 
-        #Each video repeats clips_per_video times in the dataset, so that we can sample multiple clips from each video:
-        self.samples = []
-        for video_id in self.video_ids:
-            for k in range(self.clips_per_video):
-                self.samples.append((video_id,k))
-                
-    def __len__(self): #The length is equal to the number of videos times the number of clips per video
-        return len(self.samples)
-    
-    def _get_frame_list(self, video_id): #Gets the list of frames for a given video_id
+        if self.split.lower() == "train":
+            self.k = int(frames_per_video_train)
+            self.sample_mode = str(sample_mode_train)
+        else:
+            self.k = int(frames_per_video_validation)
+            self.sample_mode = str(sample_mode_validation)
+        #One item per video, aggregating frames internally:
+    def __len__(self):
+        return len(self.video_ids)
+    def _get_frame_list(self, video_id: str) -> List[str]: #Gets the list of frame file names for the given video id, depending on whether we are using only annotated frames or all frames
         m = self.meta[video_id]
         if use_only_annotated_frames:
             frames = m.get("annotated_frame_names", [])
@@ -41,54 +55,38 @@ class VideoClipDataset(torch.utils.data.Dataset):
         else:
             frames = m.get("frames_names", [])
         return frames
-    
-    def _sample_clip(self,frames,rng):#Samples a clip of len(clip_len) from the list of frames, using a random number generator rng
-        T = self.clip_len
-        n = len(frames)
-        if n <= 0:
-            raise RuntimeError("No frames were found for this video!")
-        if n < T:
-            #padding if there is not enough frames to sample a full clip
-            idxs = list(range(n)) + [n-1]*(T-n)
-            return [frames[i] for i in idxs]
-        
-        start = rng.randint(0, n - T)
-        return frames[start:start+T]
 
-    def __getitem__(self, idx):#Gets the clip and label for the given index
-        video_id, k = self.samples[idx]
+    def __getitem__(self, idx: int):#Gets the clip and label for the given index
+        video_id, k = self.video_ids[idx]
         m = self.meta[video_id]
-        y = torch.tensor(int(m['label']), dtype=torch.float32)#Get the label for the video and convert it to a tensor
+        y = torch.tensor(int(m["label"]), dtype=torch.long)#Get the label for the video and convert it to a tensor
 
-        rng = random.Random(self.seed+idx+1000*self.fold)
+        rng = random.Random(self.seed+idx+1000*self.fold+idx)
         frames = self._get_frame_list(video_id)
-        clip_names = self._sample_clip(frames,rng)\
         
-        #Load the frames & stack them into a tensor of shape (C,T,H,W):
-        images = []
-        for frame in clip_names:
-            path = os.path.join(m["frames_dir"], frame)
+        inds = sample_frame_indices(len(frames), self.k, self.sample_mode, rng) #Sample frame indices based on the specified mode
+        frame_names = [frames[i] for i in inds] #Get the corresponding frame file names
+        images: List[torch.Tensor] = []
 
-            arr = imread(path) #Read the image from the path
-            if arr.ndim == 2: #If the image is grayscale, convert it to RGB by duplicating the channels
+        for frame in frame_names:
+            path = os.path.join(m["frames_dir"], frame) #Get the full path to the frame image
+            arr = imread(path) #Read the image as a numpy array
+            if arr.ndim == 2: #If the image is grayscale, convert it to RGB by duplicating the single channel
                 arr = gray2rgb(arr)
             elif arr.shape[2] == 4: #If the image has an alpha channel, remove it
                 arr = arr[:,:,:3]
             im = torch.from_numpy(np.ascontiguousarray(arr)).permute(2,0,1).float() / 255.0 #Convert the image to a tensor of shape (C,H,W) and normalize to [0,1]
             images.append(im)
 
-        x = torch.stack(images, dim=1) #Tensor of shape (C,T,H,W)
+        x = torch.stack(images, dim=0) #Tensor of shape [K,C,H,W]
 
-        #Resize the frames to the specified size:
-        x2 = x.permute(1,0,2,3) #Permute to (C,T,H,W) for interpolation
-        x2 = F.interpolate(x2, size=resize_hw, mode='bilinear', align_corners=False) #Resize the frames
-        x2 = x2.permute(1,0,2,3).contiguous() #Permute back to (T,C,H,W) and make it contiguous in memory
-        
-        return x2, y, video_id #Return the clip tensor, label, and video_id for the given index
+        x = F.interpolate(x, size=resize_hw, mode="bilinear", align_corners=False) #Resize the frames to the specified size for model input
+
+        return x.contiguous(), y, video_id #Return the clip tensor, label tensor, and video id as a string
     
 #Create a dataset instance with the specified parameters
 if __name__ == "__main__": #Test the dataset by creating an instance and getting a sample
-    dataset = VideoClipDataset(fold=0, split="train", clip_len=16, clips_per_video=1) 
-    print(f"Dataset length: {len(dataset)}")
+    dataset = VideoFrameDataset(fold=0, split="train") 
+    print(f"Dataset length (videos): {len(dataset)}")
     x, y, video_id = dataset[0]
-    print(f"Sample clip shape: {tuple(x.shape)}, label: {float(y.item())}, video_id: {video_id}")
+    print(f"Sample clip shape: {tuple(x.shape)} (K,C,H,W), label: {float(y.item())}, video_id: {video_id}")
