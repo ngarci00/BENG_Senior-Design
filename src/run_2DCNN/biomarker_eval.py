@@ -323,7 +323,7 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    report_dir = args.report_dir or os.path.join(runs_path, "reports")
+    report_dir = args.report_dir or os.path.join(runs_path, "reports") #<_--Default report directory, should match where eval.py saves outputs unless overridden.
 
     print(f"[biomarker_eval] using report_dir={report_dir}")
     if args.results_csv:
