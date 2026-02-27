@@ -3,10 +3,12 @@ import os
 
 #data paths:
 data_dir = os.path.join("data", "videos") #Base directory for video data
-features_dir = os.path.join(data_dir, "svm_features") #Directory to save extracted features for
 run_name = "run_SVM"
 runs_dir = os.path.join("runs", run_name) #Directory to save SVM training runs, where run_name can be something like "svm_run_1"
+features_dir = os.path.join(runs_dir, "svm_features") #Directory to save extracted features for
+models_dir = os.path.join(runs_dir, "models") #Directory to save trained SVM models for each fold
 reports_dir = os.path.join(runs_dir, "reports") #Directory to save training reports and metrics for each fold
+
 #index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
 index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
 
@@ -21,10 +23,10 @@ resize_hw = (224,224) #ImageNet backbones typically use 224x224, we can also try
 use_only_annotated_frames = True #Whether to use only annotated frames for train/val, should match the setting used during feature extraction
 
 frames_per_video_train = 16 #Number of frames to sample from each video for training, should match the setting used during feature extraction
-frames_per_video_val = 16 #Number of frames to sample from each video for validation, should match the setting used during feature extraction
+frames_per_video_validation = 16 #Number of frames to sample from each video for validation, should match the setting used during feature extraction
 
 sample_mode_train = "random" #Sampling mode for training frames
-sample_mode_val = "uniform" #Sampling mode for validation frames
+sample_mode_validation = "uniform" #Sampling mode for validation frames
 
 #Feature extraction parameters:
 use_pretrained_backbone = True #Whether to use a pretrained ResNet-18 backbone for feature extraction

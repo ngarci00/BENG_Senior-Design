@@ -1,16 +1,22 @@
-import os, json, numpy as np, torch
+import os, sys, json, numpy as np, torch
 from torch.utils.data import DataLoader
 
-from src.run_2DCNN.dataset import VideoFrameDataset
-from feature_extractor import ResNet18Embedder
-import config
+#Ensure `<repo_root>/src` is on sys.path so we can import run_2DCNN, run_SVM, etc.
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+_SRC_DIR = os.path.join(_REPO_ROOT, "src")
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
+
+from run_2DCNN.dataset import VideoFrameDataset
+from run_SVM.feature_extractor import ResNet18Embedder
+from run_SVM import config
 
 #Ensuring output directory exists
 def ensure_dir(path: str):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def _video_to_embbeding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Tensor:
+def _video_to_embedding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Tensor:
     """Converts a batch of video frames to a single feature vector by averaging the frame-level features"""
     b, k, c, h, w = x.shape
     x2 = x.view(b*k,c,h,w) #Reshape to process all frames together
@@ -20,7 +26,7 @@ def _video_to_embbeding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Te
     return z_video
 
 def extract_fold(fold:int, device:str) -> None:
-    ensure_dir(config.runs_dir) #Ensure the output directory exists
+    ensure_dir(config.features_dir) #Ensure the output directory exists
 
     output_path = os.path.join(config.features_dir, f"fold_{fold}.npz") #Path to save the extracted features for this fold
     if os.path.exists(output_path):
@@ -29,7 +35,7 @@ def extract_fold(fold:int, device:str) -> None:
     
     #dataset loading for train and validation
     ds_train = VideoFrameDataset(fold=fold, split="train")
-    ds_val = VideoFrameDataset(fold=fold, split="validation")
+    ds_val = VideoFrameDataset(fold=fold, split="val")
 
     #Dataloaders for train and validation
     dl_train = DataLoader(ds_train,batch_size=4,shuffle=False,num_workers=2, pin_memory=False)
@@ -43,7 +49,7 @@ def extract_fold(fold:int, device:str) -> None:
         with torch.no_grad(): #No need to compute gradients for feature extraction
             for x,y,video_id in dl:
                 x = x.to(device) #Move the batch of video frames to the device
-                z = _video_to_embbeding(embedder, x) #Extract features for the batch of videos
+                z = _video_to_embedding(embedder, x) #Extract features for the batch of videos
                 X_list.append(z.cpu().numpy()) #Move the features back to CPU and store them
                 y_list.append(y.cpu().numpy()) #Store the labels
                 vid_list.extend(video_id) #Store the video ids
@@ -54,6 +60,7 @@ def extract_fold(fold:int, device:str) -> None:
     X_train, y_train, vids_train = run_loader(dl_train) #Extract features for the training set
     X_val, y_val, vids_val = run_loader(dl_val) #Extract features for
 
+    os.makedirs(config.features_dir, exist_ok=True) #Ensure the features directory exists
     np.savez_compressed(output_path, X_train=X_train, y_train=y_train, vids_train=vids_train, X_val=X_val, y_val=y_val, vids_val=vids_val) #Save the extracted features, labels, and video ids to a compressed .npz file
     print(f"Extracted features for fold {fold} saved to {output_path}")
     print(f"Train features shape: {X_train.shape}, Train labels shape: {y_train.shape}, Val features shape: {X_val.shape}, Val labels shape: {y_val.shape}")
