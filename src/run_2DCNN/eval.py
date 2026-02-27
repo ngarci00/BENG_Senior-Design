@@ -6,8 +6,8 @@ python src/run_3DCNN/eval.py (It should automatically read the best model from e
 """
 import os, torch, json, csv, argparse, numpy as np, matplotlib.pyplot as plt 
 from sklearn.metrics import (confusion_matrix, accuracy_score, balanced_accuracy_score, f1_score, precision_score, recall_score, roc_curve, auc, precision_recall_curve)
-from config import splits_json_path, runs_path, kfolds, clip_len, seed
-from dataset import VideoClipDataset
+from config import splits_json_path, runs_path, kfolds, seed, frames_per_video_validation
+from dataset import VideoFrameDataset
 from typing import Dict, List, Tuple #For type hinting, helps with readability and debugging
 from model import build_model
 
@@ -82,14 +82,21 @@ def _save_roc_curve(y_true: List[int], y_prob: List[float], out_dir:str, fold: i
     plt.close()
 
 @torch.no_grad() #No need to compute gradients during evaluation
-def _infer_fold(fold: int, device: str, eval_clips_per_video: int, batch_size: int, num_workers: int) -> Tuple[List[Dict], Dict[str, float]]:
+def _infer_fold(fold: int, device: str, eval_frames_per_video: int, batch_size: int, num_workers: int) -> Tuple[List[Dict], Dict[str, float]]:
     fold_dir = os.path.join(runs_path, f"fold_{fold}")
     best_model_path = os.path.join(fold_dir, "best_model.pt")
     if not os.path.exists(best_model_path):
         raise FileNotFoundError(f"Best model not found for fold {fold} at {best_model_path}")
     
     #Dataset Validation
-    ds_val = VideoClipDataset(fold=fold, split="val", clip_len=clip_len, clips_per_video=eval_clips_per_video, seed=seed)
+    ds_val = VideoFrameDataset(fold=fold, split="val", seed=seed + fold)
+    #Override frames per video for eval if specified
+    if eval_frames_per_video is not None:
+        ds_val.k = int(eval_frames_per_video) 
+        try:
+            ds_val.sample_mode = "uniform"
+        except Exception:
+            pass
 
     #DataLoader Validation
     dl_val = torch.utils.data.DataLoader(ds_val, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=(device == "cuda"))
@@ -100,31 +107,37 @@ def _infer_fold(fold: int, device: str, eval_clips_per_video: int, batch_size: i
     model.load_state_dict(best_model if not (isinstance(best_model, dict) and "model_state_dict" in best_model) else best_model["model_state_dict"], strict=True)
     model.eval()
 
-    by_video_logits: Dict[str, List[float]] = {}
+    by_video_probs: Dict[str, List[float]] = {}
     by_video_labels: Dict[str, int] = {}
 
     #Inference Loop
     for x, y, vids in dl_val:
         x = x.to(device)
+        if x.ndim != 5:
+            raise RuntimeError(f"Expected batched frames with shape [B,K,C,H,W], got {tuple(x.shape)}")
         y_int = y.detach().cpu().numpy().astype(int).reshape(-1).tolist() #Convert to numpy array of ints
 
-        logits = model(x)
-        
-        if logits.ndim == 2 and logits.shape[1] == 1: #Binary classification with single logit output
-            logits = logits[:, 0] #Use logit for class 0 (FAIL)
-        elif logits.ndim == 2 and logits.shape[1] == 2: #Binary classification with two logit outputs
-            logits = logits[:, 1] #Use logit for class 1 (PASS)
-        elif logits.ndim == 1: #Already in shape (batch_size)
-            pass
-        else:
+        logits = model(x)  # expected [B,2] from our 2D ResNet head
+
+        if logits.ndim == 2 and logits.shape[1] == 2:
+            #Use probability of PASS(1)
+            probs_pos = torch.softmax(logits, dim=1)[:, 1]
+        elif logits.ndim == 2 and logits.shape[1] == 1:
+            probs_pos = torch.sigmoid(logits[:, 0])
+        elif logits.ndim == 1:
+            probs_pos = torch.sigmoid(logits)
+        else:    
             raise ValueError(f"Unexpected logit shape: {tuple(logits.shape)}") #Assume it's already the correct shape
         
         logits_list = logits.detach().cpu().numpy().reshape(-1).tolist() #Convert to list of floats
         vids_list = list(vids) #Convert to list of strings
 
-        for vid, yi, li, in zip(vids_list, y_int, logits_list):
-            by_video_logits.setdefault(vid, []).append(float(li)) #Append logit to list for this video
-            by_video_labels[vid] = int(yi) #Set label for this video (same for all clips)
+        probs_list = probs_pos.detach().cpu().numpy().reshape(-1).tolist()
+        vids_list = list(vids)
+
+        for vid, yi, pi in zip(vids_list, y_int, probs_list):
+            by_video_probs.setdefault(vid,[]).append(float(pi)) #Append probability for this clip to the list for this video
+            by_video_labels[vid] = int(yi) #True label should be the same for all clips
 
     #Aggregate results by video
     rows:  List[Dict] = []
@@ -132,22 +145,21 @@ def _infer_fold(fold: int, device: str, eval_clips_per_video: int, batch_size: i
     y_pred: List[int] = []
     y_prob: List[float] = []
 
-    for vid in sorted(by_video_logits.keys()):
-        mean_logit = float(np.mean(by_video_logits[vid])) #Average logit across clips for this video
-        prob = float(1/(1+np.exp(-mean_logit))) #Convert logit to probability using sigmoid
-        pred = 1 if prob >= 0.5 else 0 #Threshold at 0.5 for binary classification
-        yt = int(by_video_labels[vid]) #True label for this video
+    for vid in sorted(by_video_probs.keys()):
+        prob = float(np.mean(by_video_probs[vid]))  # mean probability across sampled frames
+        pred = 1 if prob >= 0.5 else 0
+        yt = int(by_video_labels[vid])
 
         #Results for this video(s)
         rows.append(
         {               
-            "fold": fold,
+            "fold": int(fold),
             "video_id": vid,
             "true_label": yt,
             "predicted_label": pred,
             "predicted_prob": prob,
-            "logit_mean": mean_logit,
-            "n_clips": len(by_video_logits[vid]),
+            "prob_mean": prob,
+            "n_frames": len(by_video_probs[vid]),
             }
         )
         y_true.append(yt)
@@ -159,8 +171,8 @@ def _infer_fold(fold: int, device: str, eval_clips_per_video: int, batch_size: i
     tn, fp, fn, tp = cm.ravel() 
 
     metrics = {
-        "fold": float(fold),
-        "n_videos": float(len(rows)),
+        "fold": int(fold),
+        "n_videos": int(len(rows)),
         "accuracy": float(accuracy_score(y_true, y_pred)),
         "bal_accuracy": float(balanced_accuracy_score(y_true, y_pred)),
         "f1_score": float(f1_score(y_true, y_pred, zero_division=0)),
@@ -201,17 +213,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--fold", type=int, default=None, help="Evaluate only one fold")
     parser.add_argument("--device", type=str, default=None, help="CPU or CUDA device to use for evaluation")
-    parser.add_argument("--eval_clips_per_video", type=int, default=5, help="Number of clips to sample per video during evaluation")
+    parser.add_argument("--eval_frames_per_video", type=int, default=None, help="Number of frames to sample per video during evaluation (overrides config)")
     parser.add_argument("--batch_size", type=int, default=4, help="Batch size for evaluation")
     parser.add_argument("--num_workers", type=int, default=0, help="Number of worker processes for data loading during evaluation")
     args = parser.parse_args()
 
     if args.device is None:
-        device = "mps" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            device = "cuda"
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            device = "mps"
+        else:
+            device = "cpu"
     else:
         device = args.device.lower()
         if device not in ["cpu", "mps", "cuda"]:
-            raise ValueError("Invalid device specified. Use 'CPU' or 'CUDA'.")
+            raise ValueError("Invalid device specified. Use 'CPU', 'MPS', or 'CUDA'.")
             
 
     _read_json(splits_json_path) #Ensure splits json is loaded before evaluation
@@ -226,7 +243,7 @@ def main():
 
     for fold in folds:
         print(f"Evaluating fold_{fold} on device: {device} ... ")
-        rows, metrics = _infer_fold(fold=fold, device=device, eval_clips_per_video=args.eval_clips_per_video, batch_size=args.batch_size, num_workers=args.num_workers)
+        rows, metrics = _infer_fold(fold=fold, device=device, eval_frames_per_video=args.eval_frames_per_video, batch_size=args.batch_size, num_workers=args.num_workers)
 
         _write_csv(os.path.join(report_dir, f"fold_{fold}_results.csv"), rows) #Save results for this fold
 
@@ -246,14 +263,15 @@ def main():
             f"Fold {fold} Metrics: Accuracy={metrics['accuracy']:.3f}, Balanced Accuracy={metrics['bal_accuracy']:.3f}, F1 Score={metrics['f1_score']:.3f}" 
             f"True Positives={metrics['tp']}, True Negatives={metrics['tn']}, False Positives={metrics['fp']}, False Negatives={metrics['fn']}")
         
-            # Write combined results and summary after all folds are processed
-        _write_csv(os.path.join(report_dir, "all_folds_metrics.csv"), all_rows) #Save combined results for all folds
-        _write_csv(os.path.join(report_dir, "all_folds_metrics_by_folds.csv"), all_metrics) #Save combined metrics for all folds
-        _write_csv(os.path.join(report_dir, "all_folds_summary.csv"), _add_mean_std(all_metrics)) #Save summary metrics with mean and std across folds
+    #Save overall metrics with mean and std across folds
+    #Write combined results and summary after all folds are processed
+    _write_csv(os.path.join(report_dir, "all_folds_results.csv"), all_rows) #Save combined results for all folds
+    _write_csv(os.path.join(report_dir, "all_folds_metrics_by_folds.csv"), all_metrics) #Save combined metrics for all folds
+    _write_csv(os.path.join(report_dir, "all_folds_summary.csv"), _add_mean_std(all_metrics)) #Save summary metrics with mean and std across folds
 
-        with open(os.path.join(report_dir, "all_folds_metrics.json"), "w") as f:
-            json.dump(all_metrics, f, indent=2)
-        print(f"Evaluation complete. Results saved to {report_dir}    ⸜(｡˃ ᵕ ˂ )⸝♡ ")
+    with open(os.path.join(report_dir, "all_folds_metrics.json"), "w") as f:
+        json.dump(all_metrics, f, indent=2)
+    print(f"Evaluation complete. Results saved to {report_dir}    ⸜(｡˃ ᵕ ˂ )⸝♡ ")
         
 if __name__ == "__main__":
     main()
