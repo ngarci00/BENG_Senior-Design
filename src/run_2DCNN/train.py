@@ -55,12 +55,12 @@ def train_2dcnn(fold, device):
 
         #TRAINING PHASE
         for x, y, _ in dl_train: #iterating over dl_train, which gives us batches of data x, labels y, and video names (ignored here)
-            x = x.to(device)#move the input data to the specified device
+            x = x.to(device) #move the input data to the specified device
             if x.ndim != 5:
                 raise RuntimeError(f"Exppected batched frames with shape (B, C, T, H, W), but got {tuple(x.shape)}")#check if the input data has the expected shape (B, C, T, H, W)
-            y = y.to(device)#move the labels to the specified device
+            y = y.to(device) #move the labels to the specified device
 
-            logits = model(x)#forward pass: passes the input data through the model to get teh output logits
+            logits = model(x) #forward pass: passes the input data through the model to get the output logits
             loss = _compute_loss(logits, y) #compute the loss by comparing the logits with true labels y
 
             optimizer.zero_grad()#zero the gradients before backpropagation

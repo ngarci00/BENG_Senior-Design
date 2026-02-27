@@ -18,12 +18,22 @@ class FrameAveraged2DCNN(nn.Module):
     
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if x.ndim != 5:
-            raise ValueError(f"Expected input tensor to have 5 dimensions (B, C, T, H, W), but got {tuple(x.shape)} dimensions.")
-        B, C, K, H, W = x.shape
-        x =x.view(B * K , C, H, W)  #Reshape to (B*K, C, H, W) to process each frame independently through the 2D CNN
-        logits = self.net(x)  #Shape: (B*K, num_classes
-        logits = logits.view(B, K, -1)  #Reshape back to (B, K, num_classes)
-        logits = logits.mean(dim=1)  # verage the logits across the K frames to get a single prediction per video
+            raise RuntimeError(f"Expected input shape [B,K,C,H,W], got {tuple(x.shape)}")
+
+        B, K, C, H, W = x.shape
+
+        #If someone accidentally passes [B, C, K, H, W], auto-fix it<- fallback
+        if C not in (1, 3) and x.shape[1] in (1, 3):
+            # x is likely [B, C, K, H, W] -> convert to [B, K, C, H, W]
+            x = x.permute(0, 2, 1, 3, 4).contiguous()
+            B, K, C, H, W = x.shape
+
+        if C != 3:
+            raise RuntimeError(f"Expected C=3 channels, got input shape {tuple(x.shape)}")
+
+        x = x.view(B * K, C, H, W)  # [B*K, C, H, W]
+        logits = self.net(x)        # [B*K, num_classes]
+        logits = logits.view(B, K, -1).mean(dim=1)  # [B, num_classes]
         return logits
 
 def build_model() -> nn.Module:

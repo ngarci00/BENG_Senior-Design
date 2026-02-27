@@ -13,11 +13,9 @@ def sample_frame_indices(n: int,k: int, mode: str, rng: random.Random) -> List[i
     if n <= 0:
         raise RuntimeError("No frames were found for this video!")
     if k <= 1:
-            return [0]
+        return [0]
     mode = (mode or "random").lower()
-    if mode =="unifomrm":
-        if k == 1:
-            return [0]
+    if mode == "uniform":
         return [int(round(i*(n-1)/(k-1))) for i in range(k)]
     if n >= k:
         return rng.sample(range(n), k)
@@ -57,7 +55,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         return frames
 
     def __getitem__(self, idx: int):#Gets the clip and label for the given index
-        video_id, k = self.video_ids[idx]
+        video_id = self.video_ids[idx]
         m = self.meta[video_id]
         y = torch.tensor(int(m["label"]), dtype=torch.long)#Get the label for the video and convert it to a tensor
 
@@ -79,9 +77,11 @@ class VideoFrameDataset(torch.utils.data.Dataset):
             images.append(im)
 
         x = torch.stack(images, dim=0) #Tensor of shape [K,C,H,W]
-
+        if x.ndim == 4 and x.shape[0] in (1,3) and x.shape[1] == self.k:
+            x = x.permute(1,0,2,3) #If the frames were read as (C,K,H,W), permute to (K,C,H,W)
         x = F.interpolate(x, size=resize_hw, mode="bilinear", align_corners=False) #Resize the frames to the specified size for model input
-
+        if x.shape[1] != 3:
+            raise RuntimeError(f"Expected 3 channels after laoding frames,but got x.shape={tuple(x.shape)}")
         return x.contiguous(), y, video_id #Return the clip tensor, label tensor, and video id as a string
     
 #Create a dataset instance with the specified parameters
