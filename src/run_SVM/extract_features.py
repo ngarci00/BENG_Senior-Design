@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader
 
 from src.run_2DCNN.dataset import VideoFrameDataset
 from feature_extractor import ResNet18Embedder
-from src.run_2DCNN import config
+import config
 
 #Ensuring output directory exists
 def ensure_dir(path: str):
@@ -20,7 +20,7 @@ def _video_to_embbeding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Te
     return z_video
 
 def extract_fold(fold:int, device:str) -> None:
-    ensure_dir(config.runs_path) #Ensure the output directory exists
+    ensure_dir(config.runs_dir) #Ensure the output directory exists
 
     output_path = os.path.join(config.features_dir, f"fold_{fold}.npz") #Path to save the extracted features for this fold
     if os.path.exists(output_path):
