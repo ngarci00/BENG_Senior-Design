@@ -7,14 +7,14 @@ run_name = "run_SVM"
 runs_dir = os.path.join("runs", run_name) #Directory to save SVM training runs, where run_name can be something like "svm_run_1"
 features_dir = os.path.join(runs_dir, "svm_features") #Directory to save extracted features for
 models_dir = os.path.join(runs_dir, "models") #Directory to save trained SVM models for each fold
-reports_dir = os.path.join(runs_dir, "reports") #Directory to save training reports and metrics for each fold
+reports_dir = os.path.join(runs_dir, "reports_10RecLabels") #Directory to save training reports and metrics for each fold
 
-#index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
-index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
+index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
+# index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
 
 # splits_json_path = os.path.join(data_dir, "splits_rec.json") #Path to splits JSON file for train/val splits (all videos)
-# splits_json_path = os.path.join(data_dir, "splits_rec_10.json") #<-- Temporary, smaller splits for quick testing (10)
-splits_json_path = os.path.join(data_dir, "splits_poly_10.json") #Path to splits JSON file for train/val splits
+splits_json_path = os.path.join(data_dir, "splits_rec_10.json") #<-- Temporary, smaller splits for quick testing (10)
+# splits_json_path = os.path.join(data_dir, "splits_poly_10.json") #Path to splits JSON file for train/val splits
 
 seed = 42 #Random seed
 kfolds = 3 #Number of folds for cross-validation, should match the number of folds used in feature extraction 

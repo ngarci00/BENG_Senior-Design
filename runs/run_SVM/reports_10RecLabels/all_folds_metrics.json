@@ -1,0 +1,67 @@
+{
+  "by_fold": [
+    {
+      "fold": 0,
+      "n_videos": 4,
+      "accuracy": 1.0,
+      "bal_accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "tp": 2.0,
+      "tn": 2.0,
+      "fp": 0.0,
+      "fn": 0.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    },
+    {
+      "fold": 1,
+      "n_videos": 3,
+      "accuracy": 1.0,
+      "bal_accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "tp": 2.0,
+      "tn": 1.0,
+      "fp": 0.0,
+      "fn": 0.0,
+      "roc_auc": 0.0,
+      "pr_auc": 0.41666666666666663
+    },
+    {
+      "fold": 2,
+      "n_videos": 3,
+      "accuracy": 1.0,
+      "bal_accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "tp": 1.0,
+      "tn": 2.0,
+      "fp": 0.0,
+      "fn": 0.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    }
+  ],
+  "summary": {
+    "accuracy_mean": 1.0,
+    "accuracy_std": 0.0,
+    "bal_accuracy_mean": 1.0,
+    "bal_accuracy_std": 0.0,
+    "precision_mean": 1.0,
+    "precision_std": 0.0,
+    "recall_mean": 1.0,
+    "recall_std": 0.0,
+    "f1_score_mean": 1.0,
+    "f1_score_std": 0.0,
+    "roc_auc_mean": 0.6666666666666666,
+    "roc_auc_std": 0.4714045207910317,
+    "pr_auc_mean": 0.8055555555555555,
+    "pr_auc_std": 0.27498597046143514,
+    "n_videos_mean": 3.3333333333333335,
+    "n_videos_std": 0.4714045207910317
+  }
+}

@@ -4,10 +4,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
-import config
+from run_SVM import config
 
 def train_fold(fold:int) -> None:
-    output_path = os.path.join(config.features_dir, f"fold_{fold}", "train_features.npz")
+    output_path = os.path.join(config.features_dir, f"fold_{fold}.npz") #Path to the extracted features for this fold
     data = np.load(output_path, allow_pickle=True)
 
     Xtrain, ytrain = data["X_train"], data["y_train"]

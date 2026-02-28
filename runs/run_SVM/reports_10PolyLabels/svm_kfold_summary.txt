@@ -1,0 +1,15 @@
+SVM k-fold summary
+kfolds=3
+
+acc: mean=1.0000 std=0.0000
+bal_acc: mean=1.0000 std=0.0000
+precision: mean=1.0000 std=0.0000
+recall: mean=1.0000 std=0.0000
+f1: mean=1.0000 std=0.0000
+roc_auc: mean=1.0000 std=0.0000
+pr_auc: mean=1.0000 std=0.0000
+
+Per-fold:
+fold 0: acc=1.000 bal_acc=1.000 f1=1.000 cm=[[2, 0], [0, 2]]
+fold 1: acc=1.000 bal_acc=1.000 f1=1.000 cm=[[1, 0], [0, 2]]
+fold 2: acc=1.000 bal_acc=1.000 f1=1.000 cm=[[2, 0], [0, 1]]
