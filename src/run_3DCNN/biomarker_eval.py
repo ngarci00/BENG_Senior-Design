@@ -1,9 +1,4 @@
-"""
-biomarker_eval.py
-
-Post-processing script to quantify model performance stratified by biomarker presence..
-
-"""
+#Post Processing Script to Summarize Anatomical Presence and Model Performance
 import os, json, csv, argparse
 from typing import Dict, List, Optional
 import numpy as np
