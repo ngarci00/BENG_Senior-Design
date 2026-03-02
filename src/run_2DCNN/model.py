@@ -29,7 +29,7 @@ class FrameAveraged2DCNN(nn.Module):
             B, K, C, H, W = x.shape
 
         if C != 3:
-            raise RuntimeError(f"Expected C=3 channels, got input shape {tuple(x.shape)}")
+            raise RuntimeError(f"Expected C = 3 channels, got input shape {tuple(x.shape)}")
 
         x = x.view(B * K, C, H, W)  # [B*K, C, H, W]
         logits = self.net(x)        # [B*K, num_classes]
