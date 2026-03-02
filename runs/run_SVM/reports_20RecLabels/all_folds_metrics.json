@@ -1,0 +1,82 @@
+{
+  "by_fold": [
+    {
+      "fold": 0,
+      "n_videos": 4,
+      "accuracy": 1.0,
+      "bal_accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "tp": 2.0,
+      "tn": 2.0,
+      "fp": 0.0,
+      "fn": 0.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    },
+    {
+      "fold": 1,
+      "n_videos": 3,
+      "accuracy": 1.0,
+      "bal_accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "tp": 2.0,
+      "tn": 1.0,
+      "fp": 0.0,
+      "fn": 0.0,
+      "roc_auc": 0.0,
+      "pr_auc": 0.41666666666666663
+    },
+    {
+      "fold": 2,
+      "n_videos": 3,
+      "accuracy": 1.0,
+      "bal_accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "tp": 1.0,
+      "tn": 2.0,
+      "fp": 0.0,
+      "fn": 0.0,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0
+    },
+    {
+      "fold": 3,
+      "n_videos": 5,
+      "accuracy": 0.6,
+      "bal_accuracy": 0.6666666666666666,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1_score": 0.6666666666666666,
+      "tp": 2.0,
+      "tn": 1.0,
+      "fp": 2.0,
+      "fn": 0.0,
+      "roc_auc": 0.5,
+      "pr_auc": 0.3333333333333333
+    }
+  ],
+  "summary": {
+    "accuracy_mean": 0.9,
+    "accuracy_std": 0.17320508075688773,
+    "bal_accuracy_mean": 0.9166666666666666,
+    "bal_accuracy_std": 0.14433756729740646,
+    "precision_mean": 0.875,
+    "precision_std": 0.21650635094610965,
+    "recall_mean": 1.0,
+    "recall_std": 0.0,
+    "f1_score_mean": 0.9166666666666666,
+    "f1_score_std": 0.14433756729740646,
+    "roc_auc_mean": 0.625,
+    "roc_auc_std": 0.414578098794425,
+    "pr_auc_mean": 0.6875,
+    "pr_auc_std": 0.3138858161108201,
+    "n_videos_mean": 3.75,
+    "n_videos_std": 0.82915619758885
+  }
+}
