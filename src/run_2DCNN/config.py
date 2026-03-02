@@ -7,21 +7,21 @@ INT_TO_LABEL = {0: 'FAIL', 1: 'PASS'} #Integer to label mapping
 #Data paths:
 data_dir = os.path.join("data", "videos") #Base directory for video data
 raw_frames_dir = os.path.join(data_dir, "raw_videos") #Directory for raw video frames
-# ann_dir = os.path.join(data_dir, "rectangle_label_videos") #Directory for annotation JSON files
-ann_dir = os.path.join(data_dir, "polygon_label_videos") #Directory for annotation JSON files #<- change to polygon_label_videos if using polygon annotations
+ann_dir = os.path.join(data_dir, "rectangle_label_videos") #Directory for annotation JSON files
+# ann_dir = os.path.join(data_dir, "polygon_label_videos") #Directory for annotation JSON files #<- change to polygon_label_videos if using polygon annotations
 
-# index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
-index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
+index_json_path = os.path.join(data_dir, "index_rec.json") #Path to index JSON file for rectangle annotations
+# index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON file for polygon annotations
 
 # splits_json_path = os.path.join(data_dir, "splits_rec.json") #Path to splits JSON file for train/val splits (all videos)
-# splits_json_path = os.path.join(data_dir, "splits_rec_10.json") #<-- Temporary, smaller splits for quick testing (10)
-splits_json_path = os.path.join(data_dir, "splits_poly_10.json") #Path to splits JSON file for train/val splits
+splits_json_path = os.path.join(data_dir, "splits_rec_20.json") #<-- Temporary, smaller splits for quick testing (10)
+# splits_json_path = os.path.join(data_dir, "splits_poly_10.json") #Path to splits JSON file for train/val splits
 
 #Output directories:
 runs_path = os.path.join("runs","run_2DCNN") #Base directory for training runs
 
 #Model & Training Parameters:
-kfolds = 3 #Number of folds for cross-validation
+kfolds = 4 #Number of folds for cross-validation
 seed = 42 #Random seed for reproducibility
 epochs = 20 #Number of training epochs try: 20, 50, 100 HERE <-
 batch_size = 16 #Batch size for training <- 2D CNN is lighter than 3D CNN so we can afford a larger batch size
@@ -36,11 +36,11 @@ frames_per_video_validation = 32 # Frames to sample for validation.
 sample_mode_train = "random" #Mode for sampling frames during training, options: "uniform", "random", "first_n"
 sample_mode_validation = "uniform" #Mode for sampling frames during validation, options: "uniform", "random", "first_n"
 
-resize_hw = (224,224) #ImageNet backbones typically use 224x224, we can also try 112x112 for a lighter load!
+resize_hw = (224,224) #ImageNet backbones typically use 224x224, we can also try (112x112) for a lighter load! which is what the 3d cnn uses
 use_only_annotated_frames = True #Whether to use only annotated frames for train/val. 
 
 #For early stopping (k-fold) and if acc reaches performance threshold:
-stop_if_val_acc_perfect = True #Helps us save some time, stops once 100% val acc, set to False if you want to train for all epochs regardless of performance.
+stop_if_val_acc_perfect = False #Helps us save some time, stops once 100% val acc, set to False if you want to train for all epochs regardless of performance.
 perfect_acc_tolerance = 1e-4 #Tolerance for considering validation acc as perfect, this way we avoid with floating points like 0.99999... being considered perfect.
 
 #Model

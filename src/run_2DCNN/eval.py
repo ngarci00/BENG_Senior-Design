@@ -235,7 +235,7 @@ def main():
 
     folds = [args.fold] if args.fold is not None else list(range(int(kfolds))) #Evaluate specified fold or all folds
 
-    report_dir =os.path.join(runs_path, "reports_10PolyLabels") # <---Directory to save evaluation reports and plots, we can change the name here
+    report_dir =os.path.join(runs_path, "reports") # <---Directory to save evaluation reports and plots, we can change the name here
     _ensure_dir(report_dir)
     
     all_rows: List[Dict] = []
