@@ -207,7 +207,7 @@ def main():
     args = parser.parse_args()
 
     if args.device is None:
-        device = "mps" if torch.cuda.is_available() else "cpu"
+        device = "mps" if torch.backends.mps.is_available() else "cuda" #MPS for Apple Silicon, otherwise cuda <- MPS : Metal Performance Shaders
     else:
         device = args.device.lower()
         if device not in ["cpu", "mps", "cuda"]:
