@@ -15,6 +15,23 @@ from run_SVM import config
 def ensure_dir(path: str):
     if not os.path.exists(path):
         os.makedirs(path)
+#validates the cached features by checking if the video ids in the cached features match the current train & val video ids
+def _cached_features_match_split(path: str, train_ids, val_ids) -> bool:
+    """Return True only when cached features were built for the current split."""
+    if not os.path.exists(path):
+        return False
+    try:
+        data = np.load(path, allow_pickle=True)
+    except Exception:
+        return False
+
+    required = {"vids_train", "vids_val"}
+    if not required.issubset(set(data.files)):
+        return False
+
+    cached_train = [str(v) for v in data["vids_train"].tolist()]
+    cached_val = [str(v) for v in data["vids_val"].tolist()]
+    return cached_train == [str(v) for v in train_ids] and cached_val == [str(v) for v in val_ids]
 
 def _video_to_embedding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Tensor:
     """Converts a batch of video frames to a single feature vector by averaging the frame-level features"""
@@ -29,13 +46,16 @@ def extract_fold(fold:int, device:str) -> None:
     ensure_dir(config.features_dir) #Ensure the output directory exists
 
     output_path = os.path.join(config.features_dir, f"fold_{fold}.npz") #Path to save the extracted features for this fold
-    if os.path.exists(output_path):
-        print(f"Features for fold {fold} already exist at {output_path}, skipping extraction.")
-        return
     
-    #dataset loading for train and validation
+    # Build datasets before deciding whether the cache is still valid.
     ds_train = VideoFrameDataset(fold=fold, split="train")
     ds_val = VideoFrameDataset(fold=fold, split="val")
+
+    if _cached_features_match_split(output_path, ds_train.video_ids, ds_val.video_ids):
+        print(f"Features for fold {fold} already exist at {output_path}, skipping extraction.")
+        return
+    if os.path.exists(output_path):
+        print(f"Features for fold {fold} exist but do not match the current split. Re-extracting.")
 
     #Dataloaders for train and validation
     dl_train = DataLoader(ds_train,batch_size=4,shuffle=False,num_workers=2, pin_memory=False)
