@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import numpy as np
 from skimage.io import imread
 from skimage.color import gray2rgb
-from config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed
+from run_3DCNN.config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed
 
 img_extensions = [".jpg", ".jpeg", ".png"]
 

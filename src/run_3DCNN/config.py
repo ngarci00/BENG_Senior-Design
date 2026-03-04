@@ -43,4 +43,3 @@ perfect_acc_tolerance = 1e-4 #Tolerance for considering validation acc as perfec
 
 #Model
 use_pretrained_model = False #we aren't using a pretrained model in this case.
-
