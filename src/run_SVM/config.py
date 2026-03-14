@@ -19,7 +19,8 @@ splits_json_path = os.path.join(data_dir, "splits_poly_20.json") #Path to splits
 seed = 42 #Random seed
 kfolds = 4 #Number of folds for cross-validation, should match the number of folds used in feature extraction 
 
-resize_hw = (224,224) #ImageNet backbones typically use 224x224, we can also try 112x112 for a lighter load!
+#Originial video resolution is 1280x720
+resize_hw = (1280,720) #ImageNet backbones typically use 224x224, we can also try 112x112 for a lighter load!
 use_only_annotated_frames = True #Whether to use only annotated frames for train/val, should match the setting used during feature extraction
 
 frames_per_video_train = 16 #Number of frames to sample from each video for training, should match the setting used during feature extraction

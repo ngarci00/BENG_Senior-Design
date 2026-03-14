@@ -1,0 +1,2 @@
+accuracy_mean,accuracy_std,bal_accuracy_mean,bal_accuracy_std,precision_mean,precision_std,recall_mean,recall_std,f1_score_mean,f1_score_std,roc_auc_mean,roc_auc_std,pr_auc_mean,pr_auc_std,n_videos_mean,n_videos_std
+0.8500000000000001,0.08660254037844385,0.8333333333333333,0.10206207261596575,0.7916666666666666,0.125,1.0,0.0,0.8785714285714286,0.07388628880563286,0.9166666666666666,0.08333333333333334,0.923611111111111,0.08589803386703461,5.0,0.0
