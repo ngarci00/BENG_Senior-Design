@@ -25,6 +25,8 @@ kfolds = 4 #Number of folds for cross-validation
 seed = 42 #Random seed for reproducibility
 epochs = 20 #Number of training epochs try: 10,20, 50, 100 HERE <-
 batch_size = 8 #Batch size for training 
+grad_accum_steps = 4 #Gradient accumulation steps (effective batch = batch_size * grad_accum_steps)
+use_mps_mixed_precision = True #Use fp16/autocast on Apple Silicon MPS to reduce memory
 learning_rate = 1e-4 #Learning rate for optimizer also refered to as alpha in some contexts (0.0001) <- Need to play with this value, 
 #as 3D CNNs can be sensitive to learning rate. Start with a small value and adjust based on training stability and convergence.
 weight_decay = 1e-2 #Weight decay for regularization
