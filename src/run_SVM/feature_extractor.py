@@ -1,6 +1,5 @@
 #Since we can't really train a SVM with video data directly, we will extract features from the videos using a pre-trained 2D CNN (e.g., ResNet-18) and then train a SVM on those features. This script will handle the feature extraction part.
 import torch, torch.nn as nn
-from typing import Tuple
 from torchvision import models
 
 class ResNet18Embedder(nn.Module):

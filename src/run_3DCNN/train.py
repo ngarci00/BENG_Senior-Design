@@ -111,8 +111,7 @@ def train_3dcnn(fold, device):
             break
 
     #Fold summaries:
-    summary = {"fold": fold, "best_f1_score": best_f1_score, "best_val_accuracy": best_val_accuracy, "best_model_path": best_path, "training_epochs": epoch, "final_epoch_metrics": metrics, "training_loss": training_loss}
-
+    summary = {"fold": fold, "best_f1_score": best_f1_score, "best_val_accuracy": best_val_accuracy, "best_model_path": best_path}
     #Save the summary for the current fold to a json file in the utput directory:
     with open(os.path.join(output_dir, "summary.json"), "w") as f:
         json.dump(summary, f, indent=2)

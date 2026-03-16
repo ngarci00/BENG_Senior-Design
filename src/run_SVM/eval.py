@@ -20,16 +20,13 @@ from sklearn.metrics import (
     precision_recall_curve,
     auc,
 )
-
-
 # Ensure `<repo_root>/src` is on sys.path so we can import run_SVM/config reliably
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC_DIR = os.path.join(_REPO_ROOT, "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from run_SVM import config  # noqa: E402
-
+from run_SVM import config  
 
 def _ensure_dir(path: str) -> None:
     os.makedirs(path, exist_ok=True)
@@ -52,7 +49,6 @@ def _write_json(path: str, obj) -> None:
 
 def _sigmoid(x: np.ndarray) -> np.ndarray:
     return 1.0 / (1.0 + np.exp(-x))
-
 
 def _plot_confusion_matrix(cm: np.ndarray, out_path: str, title: str) -> None:
     plt.figure(figsize=(6, 5))
@@ -89,7 +85,6 @@ def _plot_roc(y_true: np.ndarray, y_prob: np.ndarray, out_path: str, title: str)
 
     return roc_auc
 
-
 def _plot_pr(y_true: np.ndarray, y_prob: np.ndarray, out_path: str, title: str) -> float:
     prec, rec, _ = precision_recall_curve(y_true, y_prob)
     pr_auc = float(auc(rec, prec))
@@ -104,7 +99,6 @@ def _plot_pr(y_true: np.ndarray, y_prob: np.ndarray, out_path: str, title: str) 
     plt.close()
 
     return pr_auc
-
 
 def _add_mean_std(metrics: List[Dict]) -> Dict:
     """Compute mean/std summary across folds for common numeric keys."""
@@ -132,7 +126,6 @@ def _add_mean_std(metrics: List[Dict]) -> Dict:
         summary[f"{k}_std"] = float(np.std(vals, ddof=0))
 
     return summary
-
 
 def _infer_fold_svm(fold: int, report_dir: str) -> Tuple[List[Dict], Dict[str, float]]:
     """Return per-video rows and a metrics dict for one fold."""

@@ -7,7 +7,7 @@ _SRC_DIR = os.path.join(_REPO_ROOT, "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from run_2DCNN.dataset import VideoFrameDataset
+import run_2DCNN.dataset as run2d_dataset
 from run_SVM.feature_extractor import ResNet18Embedder
 from run_SVM import config
 
@@ -43,6 +43,10 @@ def _video_to_embedding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Te
     return z_video
 
 def extract_fold(fold:int, device:str) -> None:
+    # Ensure the 2D dataset uses the same target resize as this SVM run config.
+    run2d_dataset.resize_hw = config.resize_hw
+    VideoFrameDataset = run2d_dataset.VideoFrameDataset
+
     ensure_dir(config.features_dir) #Ensure the output directory exists
 
     output_path = os.path.join(config.features_dir, f"fold_{fold}.npz") #Path to save the extracted features for this fold
