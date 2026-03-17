@@ -23,8 +23,8 @@ runs_path = os.path.join("runs","run_3DCNN") #Base directory for training runs
 #Model & Training Parameters:
 kfolds = 4 #Number of folds for cross-validation
 seed = 42 #Random seed for reproducibility
-epochs = 20 #Number of training epochs try: 10,20, 50, 100 HERE <-
-batch_size = 1 #Batch size for training: batch size can be limited by GPU memory. We start with a small batch size
+epochs = 10 #Number of training epochs try: 10,20, 50, 100 HERE <-
+batch_size = 2 #Batch size for training: batch size can be limited by GPU memory. We start with a small batch size
 #an effective batch size can be achieved by using gradient accumulation, which allows us to simulate a larger batch size  w/o increasing memory usage
 grad_accum_steps = 4 #Gradient accumulation steps (effective batch = batch_size * grad_accum_steps) = 4 in this case
 use_mps_mixed_precision = True #Use fp16/autocast on Apple Silicon MPS to reduce memory
