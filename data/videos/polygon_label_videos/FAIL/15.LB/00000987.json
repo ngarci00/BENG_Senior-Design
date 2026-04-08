@@ -159,6 +159,32 @@
       "shape_type": "polygon",
       "flags": {},
       "mask": null
+    },
+    {
+      "label": "endotracheal_tube",
+      "points": [
+        [
+          1116.0204081632655,
+          266.12244897959187
+        ],
+        [
+          469.08163265306126,
+          457.9591836734694
+        ],
+        [
+          408.8775510204082,
+          717.1428571428572
+        ],
+        [
+          1117.0408163265308,
+          719.0
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
     }
   ],
   "imagePath": "../../../raw_videos/15.LB/00000987.jpg",
