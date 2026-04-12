@@ -22,7 +22,7 @@ def train_fold(fold:int) -> None:
     if config.svm_kernel == "rbf":
         param_grid["svm__gamma"] = config.svm_gamma_grid
     
-    grid_search = GridSearchCV(pipe, param_grid = param_grid, scoring="balanced_accuracy", cv=3, n_jobs=-1)
+    grid_search = GridSearchCV(pipe, param_grid = param_grid, scoring="balanced_accuracy", cv=3, n_jobs=config.svm_n_jobs)
     grid_search.fit(Xtrain, ytrain)
 
     os.makedirs(config.models_dir, exist_ok=True)

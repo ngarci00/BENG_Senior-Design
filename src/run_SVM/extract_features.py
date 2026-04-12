@@ -62,8 +62,8 @@ def extract_fold(fold:int, device:str) -> None:
         print(f"Features for fold {fold} exist but do not match the current split. Re-extracting.")
 
     #Dataloaders for train and validation
-    dl_train = DataLoader(ds_train,batch_size=4,shuffle=False,num_workers=2, pin_memory=False)
-    dl_val = DataLoader(ds_val,batch_size=4,shuffle=False,num_workers=2, pin_memory=False)
+    dl_train = DataLoader(ds_train,batch_size=4,shuffle=False,num_workers=config.num_workers, pin_memory=False)
+    dl_val = DataLoader(ds_val,batch_size=4,shuffle=False,num_workers=config.num_workers, pin_memory=False)
 
     embedder = ResNet18Embedder(pretrained=config.use_pretrained_backbone).to(device) #Initialize the ResNet-18 embedder and move it to the specified device
     embedder.eval() #Set the embedder to evaluation mode since we are only extracting features

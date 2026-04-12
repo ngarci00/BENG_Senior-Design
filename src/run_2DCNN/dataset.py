@@ -49,9 +49,9 @@ class VideoFrameDataset(torch.utils.data.Dataset):
             frames = m.get("annotated_frame_names", [])
             #If there are no annotated frames, fall back to using all frames
             if len(frames) == 0: 
-                frames = m.get("frames_names", [])
+                frames = m.get("frame_names") or m.get("frames_names", [])
         else:
-            frames = m.get("frames_names", [])
+            frames = m.get("frame_names") or m.get("frames_names", [])
         return frames
 
     def __getitem__(self, idx: int):#Gets the clip and label for the given index

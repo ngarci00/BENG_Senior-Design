@@ -30,11 +30,13 @@ sample_mode_train = "random" #Sampling mode for training frames
 sample_mode_validation = "uniform" #Sampling mode for validation frames
 
 #Feature extraction parameters:
+num_workers = 0 #Number of DataLoader worker processes. Use 0 on macOS/sandboxed environments to avoid shared-memory worker errors
 use_pretrained_backbone = True #Whether to use a pretrained ResNet-18 backbone for feature extraction
 embedding_pool = "mean" #Pooling method to aggregate frame-level features into a video-level feature vector, can be "mean" or "max"
 
 #SVM training parameters:
 svm_kernel = "linear" #Kernel type for SVM, can be "rbf": Radial Basis Function, "poly": Polynomial, "sigmoid": Sigmoid, or "linear"
 svm_C_grid = [0.1, 1.0, 10.0] #Regularization parameter for SVM, higher values mean less regularization
+svm_n_jobs = 1 #Number of parallel jobs for GridSearchCV. Use 1 on macOS/sandboxed environments to avoid process-spawn errors
 #if we use rbf then we need to specify gamma:
 svm_gamma_grid = ["scale", "auto"] #Kernel coefficient for RBF, can be "scale" (1 / n_features) or "auto" (1 / n_features)
