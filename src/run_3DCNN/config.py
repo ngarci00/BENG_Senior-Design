@@ -15,7 +15,7 @@ index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON 
 
 # splits_json_path = os.path.join(data_dir, "splits_rec.json") #Path to splits JSON file for train/val splits (all videos)
 # splits_json_path = os.path.join(data_dir, "splits_rec_20.json") #<-- Temorary, smaller splits for quick testing (20)
-splits_json_path = os.path.join(data_dir, "splits_poly_20.json") #Path to splits JSON file for train/val splits
+splits_json_path = os.path.join(data_dir, "splits_poly_50.json") #Path to splits JSON file for train/val splits
 
 #Output directories:
 runs_path = os.path.join("runs","run_3DCNN") #Base directory for training runs
