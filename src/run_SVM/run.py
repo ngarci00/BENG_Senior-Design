@@ -35,6 +35,8 @@ def time_training(fold: int) -> float:
 
 #Main script to run the entire SVM pipeline
 def main():
+    pipeline_start = time.perf_counter()
+
     device = "mps" if torch.backends.mps.is_available() else "cpu"
     print(f"Using device: {device}")
     folds = list(range(int(config.kfolds)))
@@ -52,6 +54,8 @@ def main():
 
     total_train_time = sum(train_times)
     print(f"Total SVM training time: {_format_seconds(total_train_time)}")
+    pipeline_elapsed = time.perf_counter() - pipeline_start
+    print(f"Total SVM pipeline runtime: {_format_seconds(pipeline_elapsed)}")
 
 
 if __name__ == "__main__":
