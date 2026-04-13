@@ -20,7 +20,7 @@ seed = 42 #Random seed
 kfolds = 4 #Number of folds for cross-validation, should match the number of folds used in feature extraction 
 
 #Originial video resolution is 1280x720
-resize_hw = (224,224) #ImageNet backbones typically use 224x224, we can also try 112x112 for a lighter load!
+resize_hw = (128,128) #ImageNet backbones typically use 224x224, we can also try 112x112 for a lighter load!
 #Need to test (64x64, 128x128, 224x224, 320x320, 600x600) for the best balance of speed and performance
 use_only_annotated_frames = True #Whether to use only annotated frames for train/val, should match the setting used during feature extraction
 
