@@ -197,6 +197,66 @@ def _add_mean_std(metrics: List[Dict]) -> List[Dict]:
 
     return metrics + [mean_row, std_row] #Append mean and std rows to the list of metrics
 
+def evaluate_folds(
+    folds: List[int] | None = None,
+    device: str | None = None,
+    eval_clips_per_video: int = 5,
+    batch_size: int = 4,
+    num_workers: int = 0,
+    report_dir: str | None = None,
+) -> Dict:
+    """Evaluate requested folds and write per-fold plus aggregate reports."""
+    if device is None:
+        device = "mps" if torch.backends.mps.is_available() else "cuda" #MPS for Apple Silicon, otherwise cuda <- MPS : Metal Performance Shaders
+    else:
+        device = device.lower()
+        if device not in ["cpu", "mps", "cuda"]:
+            raise ValueError("Invalid device specified. Use 'cpu', 'mps', or 'cuda'.")
+
+    _read_json(splits_json_path) #Ensure splits json is loaded before evaluation
+
+    fold_ids = folds if folds is not None else list(range(int(kfolds))) #Evaluate specified fold or all folds
+
+    rd = report_dir or os.path.join(runs_path, "reports") # <---Directory to save evaluation reports and plots, we can change the name here
+    _ensure_dir(rd)
+    
+    all_rows: List[Dict] = []
+    all_metrics: List[Dict] = []
+
+    for fold in fold_ids:
+        print(f"Evaluating fold_{fold} on device: {device} ... ")
+        rows, metrics = _infer_fold(fold=fold, device=device, eval_clips_per_video=eval_clips_per_video, batch_size=batch_size, num_workers=num_workers)
+
+        _write_csv(os.path.join(rd, f"fold_{fold}_results.csv"), rows) #Save results for this fold
+
+        y_true = [int(r["true_label"]) for r in rows]
+        y_pred = [int(r["predicted_label"]) for r in rows]
+        y_prob = [float(r["predicted_prob"]) for r in rows]
+
+        #Save confusion matrix plot for this fold
+        cm = confusion_matrix(y_true, y_pred, labels=[0,1])
+        _save_confusion_matrix(cm, os.path.join(rd, f"fold_{fold}_confusion_matrix.png"), title=f"Fold {fold} Confusion Matrix")
+        #Save ROC curve plot for this fold
+        _save_roc_curve(y_true, y_prob, rd, fold)
+        all_rows.extend(rows) #Add this fold's results to the overall list
+        all_metrics.append(metrics) #Add this fold's metrics to the overall list
+
+        print(
+            f"Fold {fold} Metrics: Accuracy={metrics['accuracy']:.3f}, Balanced Accuracy={metrics['bal_accuracy']:.3f}, F1 Score={metrics['f1_score']:.3f}" 
+            f"True Positives={metrics['tp']}, True Negatives={metrics['tn']}, False Positives={metrics['fp']}, False Negatives={metrics['fn']}")
+        
+    # Write combined results and summary after all folds are processed
+    _write_csv(os.path.join(rd, "all_folds_results.csv"), all_rows) #Save combined results for all folds
+    _write_csv(os.path.join(rd, "all_folds_metrics.csv"), all_rows) #Legacy filename used by biomarker_eval.py
+    _write_csv(os.path.join(rd, "all_folds_metrics_by_folds.csv"), all_metrics) #Save combined metrics for all folds
+    _write_csv(os.path.join(rd, "all_folds_summary.csv"), _add_mean_std(all_metrics)) #Save summary metrics with mean and std across folds
+
+    with open(os.path.join(rd, "all_folds_metrics.json"), "w") as f:
+        json.dump(all_metrics, f, indent=2)
+    print(f"Evaluation complete. Results saved to {rd}")
+    return {"by_fold": all_metrics, "rows": all_rows}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--fold", type=int, default=None, help="Evaluate only one fold")
@@ -206,54 +266,14 @@ def main():
     parser.add_argument("--num_workers", type=int, default=0, help="Number of worker processes for data loading during evaluation")
     args = parser.parse_args()
 
-    if args.device is None:
-        device = "mps" if torch.backends.mps.is_available() else "cuda" #MPS for Apple Silicon, otherwise cuda <- MPS : Metal Performance Shaders
-    else:
-        device = args.device.lower()
-        if device not in ["cpu", "mps", "cuda"]:
-            raise ValueError("Invalid device specified. Use 'CPU' or 'CUDA'.")
-            
-
-    _read_json(splits_json_path) #Ensure splits json is loaded before evaluation
-
-    folds = [args.fold] if args.fold is not None else list(range(int(kfolds))) #Evaluate specified fold or all folds
-
-    report_dir =os.path.join(runs_path, "reports") # <---Directory to save evaluation reports and plots, we can change the name here
-    _ensure_dir(report_dir)
-    
-    all_rows: List[Dict] = []
-    all_metrics: List[Dict] = []
-
-    for fold in folds:
-        print(f"Evaluating fold_{fold} on device: {device} ... ")
-        rows, metrics = _infer_fold(fold=fold, device=device, eval_clips_per_video=args.eval_clips_per_video, batch_size=args.batch_size, num_workers=args.num_workers)
-
-        _write_csv(os.path.join(report_dir, f"fold_{fold}_results.csv"), rows) #Save results for this fold
-
-        y_true = [int(r["true_label"]) for r in rows]
-        y_pred = [int(r["predicted_label"]) for r in rows]
-        y_prob = [float(r["predicted_prob"]) for r in rows]
-
-        #Save confusion matrix plot for this fold
-        cm = confusion_matrix(y_true, y_pred, labels=[0,1])
-        _save_confusion_matrix(cm, os.path.join(report_dir, f"fold_{fold}_confusion_matrix.png"), title=f"Fold {fold} Confusion Matrix")
-        #Save ROC curve plot for this fold
-        _save_roc_curve(y_true, y_prob, report_dir, fold)
-        all_rows.extend(rows) #Add this fold's results to the overall list
-        all_metrics.append(metrics) #Add this fold's metrics to the overall list
-
-        print(
-            f"Fold {fold} Metrics: Accuracy={metrics['accuracy']:.3f}, Balanced Accuracy={metrics['bal_accuracy']:.3f}, F1 Score={metrics['f1_score']:.3f}" 
-            f"True Positives={metrics['tp']}, True Negatives={metrics['tn']}, False Positives={metrics['fp']}, False Negatives={metrics['fn']}")
-        
-            # Write combined results and summary after all folds are processed
-        _write_csv(os.path.join(report_dir, "all_folds_metrics.csv"), all_rows) #Save combined results for all folds
-        _write_csv(os.path.join(report_dir, "all_folds_metrics_by_folds.csv"), all_metrics) #Save combined metrics for all folds
-        _write_csv(os.path.join(report_dir, "all_folds_summary.csv"), _add_mean_std(all_metrics)) #Save summary metrics with mean and std across folds
-
-        with open(os.path.join(report_dir, "all_folds_metrics.json"), "w") as f:
-            json.dump(all_metrics, f, indent=2)
-        print(f"Evaluation complete. Results saved to {report_dir}    ⸜(｡˃ ᵕ ˂ )⸝♡ ")
+    folds = [args.fold] if args.fold is not None else list(range(int(kfolds)))
+    evaluate_folds(
+        folds=folds,
+        device=args.device,
+        eval_clips_per_video=args.eval_clips_per_video,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+    )
         
 if __name__ == "__main__":
     main()
