@@ -243,6 +243,34 @@ def eval_fold(fold: int, report_dir: str | None = None) -> Dict[str, float]:
     return metrics
 
 
+def evaluate_folds(folds: List[int] | None = None, report_dir: str | None = None) -> Dict:
+    """Evaluate requested folds and write aggregate report artifacts."""
+    rd = report_dir if report_dir else config.reports_dir
+    _ensure_dir(rd)
+
+    fold_ids = folds if folds is not None else list(range(int(config.kfolds)))
+
+    all_rows: List[Dict] = []
+    all_metrics: List[Dict] = []
+
+    for fold in fold_ids:
+        rows, metrics = _infer_fold_svm(int(fold), report_dir=rd)
+        all_rows.extend(rows)
+        all_metrics.append(metrics)
+        print(metrics)
+
+    # All-fold outputs (CNN-style names)
+    _write_csv(os.path.join(rd, "all_folds_results.csv"), all_rows)
+    _write_csv(os.path.join(rd, "all_folds_metrics_by_folds.csv"), all_metrics)
+
+    summary = _add_mean_std(all_metrics)
+    _write_csv(os.path.join(rd, "all_folds_summary.csv"), [summary] if summary else [])
+    _write_json(os.path.join(rd, "all_folds_metrics.json"), {"by_fold": all_metrics, "summary": summary})
+
+    print(f"[SVM] Wrote reports to: {rd}")
+    return {"by_fold": all_metrics, "summary": summary}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fold", type=int, default=None, help="Evaluate only one fold")
@@ -250,28 +278,8 @@ def main() -> None:
     args = parser.parse_args()
 
     report_dir = args.report_dir if args.report_dir else config.reports_dir
-    _ensure_dir(report_dir)
-
     folds = [args.fold] if args.fold is not None else list(range(int(config.kfolds)))
-
-    all_rows: List[Dict] = []
-    all_metrics: List[Dict] = []
-
-    for fold in folds:
-        rows, metrics = _infer_fold_svm(int(fold), report_dir=report_dir)
-        all_rows.extend(rows)
-        all_metrics.append(metrics)
-        print(metrics)
-
-    # All-fold outputs (CNN-style names)
-    _write_csv(os.path.join(report_dir, "all_folds_results.csv"), all_rows)
-    _write_csv(os.path.join(report_dir, "all_folds_metrics_by_folds.csv"), all_metrics)
-
-    summary = _add_mean_std(all_metrics)
-    _write_csv(os.path.join(report_dir, "all_folds_summary.csv"), [summary] if summary else [])
-    _write_json(os.path.join(report_dir, "all_folds_metrics.json"), {"by_fold": all_metrics, "summary": summary})
-
-    print(f"[SVM] Wrote reports to: {report_dir}")
+    evaluate_folds(folds=folds, report_dir=report_dir)
 
 
 if __name__ == "__main__":

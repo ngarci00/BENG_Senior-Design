@@ -318,6 +318,47 @@ def _summarize_biomarkers(rows: List[Dict], index_by_vid: Dict[str, Dict]) -> Li
 
     return out
 
+
+def run_biomarker_eval(
+    fold: Optional[int] = None,
+    report_dir: Optional[str] = None,
+    results_csv: Optional[str] = None,
+) -> List[str]:
+    """Run biomarker-stratified evaluation and return written CSV paths."""
+    rd = report_dir or config.reports_dir
+
+    print(f"[biomarker_eval] using report_dir={rd}")
+    if results_csv:
+        print(f"[biomarker_eval] using results_csv={results_csv}")
+
+    index_by_vid = _load_index_by_vid()
+
+    if fold is None:
+        rows = _load_eval_rows(rd, fold=None, results_csv=results_csv)
+        summary = _summarize_biomarkers(rows, index_by_vid)
+        if not summary:
+            raise RuntimeError(
+                "No biomarker summary rows were produced. This usually means the input CSV does not contain per-video predictions. "
+                "Point --results_csv to a fold_<k>_results.csv or all_folds_results.csv produced by eval.py."
+            )
+        out_csv = os.path.join(rd, "biomarkers_summary_all.csv")
+        _write_csv(out_csv, summary)
+        print(f"[biomarker_eval] wrote {out_csv}")
+        return [out_csv]
+
+    rows = _load_eval_rows(rd, fold=fold, results_csv=results_csv)
+    summary = _summarize_biomarkers(rows, index_by_vid)
+    if not summary:
+        raise RuntimeError(
+            "No biomarker summary rows were produced. This usually means the input CSV does not contain per-video predictions. "
+            "Point --results_csv to a fold_<k>_results.csv or all_folds_results.csv produced by eval.py."
+        )
+    out_csv = os.path.join(rd, f"biomarkers_summary_fold_{fold}.csv")
+    _write_csv(out_csv, summary)
+    print(f"[biomarker_eval] wrote {out_csv}")
+    return [out_csv]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="Biomarker-stratified post-processing for 3DCNN eval outputs")
     ap.add_argument("--fold", type=int, default=None, help="Evaluate biomarker stats for one fold only.")
@@ -335,38 +376,7 @@ def main() -> None:
     )
     args = ap.parse_args()
 
-    report_dir = args.report_dir or config.reports_dir
-
-    print(f"[biomarker_eval] using report_dir={report_dir}")
-    if args.results_csv:
-        print(f"[biomarker_eval] using results_csv={args.results_csv}")
-
-    index_by_vid = _load_index_by_vid()
-
-    #Load rows
-    if args.fold is None:
-        rows = _load_eval_rows(report_dir, fold=None, results_csv=args.results_csv)
-        #Write overall summary
-        summary = _summarize_biomarkers(rows, index_by_vid)
-        if not summary:
-            raise RuntimeError(
-                "No biomarker summary rows were produced. This usually means the input CSV does not contain per-video predictions. "
-                "Point --results_csv to a fold_<k>_results.csv or all_folds_results.csv produced by eval.py."
-            )
-        out_csv = os.path.join(report_dir, "biomarkers_summary_all.csv")
-        _write_csv(out_csv, summary)
-        print(f"[biomarker_eval] wrote {out_csv}")
-    else:
-        rows = _load_eval_rows(report_dir, fold=args.fold, results_csv=args.results_csv)
-        summary = _summarize_biomarkers(rows, index_by_vid)
-        if not summary:
-            raise RuntimeError(
-                "No biomarker summary rows were produced. This usually means the input CSV does not contain per-video predictions. "
-                "Point --results_csv to a fold_<k>_results.csv or all_folds_results.csv produced by eval.py."
-            )
-        out_csv = os.path.join(report_dir, f"biomarkers_summary_fold_{args.fold}.csv")
-        _write_csv(out_csv, summary)
-        print(f"[biomarker_eval] wrote {out_csv}")
+    run_biomarker_eval(fold=args.fold, report_dir=args.report_dir, results_csv=args.results_csv)
 
 
 if __name__ == "__main__":
