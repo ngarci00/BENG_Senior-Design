@@ -3,6 +3,6 @@
   "best_params": {
     "svm__C": 0.1
   },
-  "best_score_balacc_cv": 0.7222222222222222,
+  "best_score_balacc_cv": 0.7063492063492064,
   "kernel": "linear"
 }
