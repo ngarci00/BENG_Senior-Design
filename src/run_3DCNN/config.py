@@ -38,7 +38,7 @@ clips_per_video_train = 5 #Number of training clips to sample per video per epoc
 clips_per_video_val = 5 #Number of validation clips to sample per video per epoch. Fewer clips can speed up validation, but may give noisier estimates of val performance.
 
 #Sampling modes for clip extraction.. Original size is 1280,720
-resize_hw = (224,224) #HxW to resize frames for model input. This is a common value for 3D CNNs (112x112)
+resize_hw = (600,600) #HxW to resize frames for model input. This is a common value for 3D CNNs (112x112)
 #Need to test (64x64, 128x128, 224x224, 320x320, 600x600) for the best balance of speed and performance
 use_only_annotated_frames = True
 
