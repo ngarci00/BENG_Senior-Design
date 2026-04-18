@@ -11,7 +11,7 @@ SCRIPTS_DIR = os.path.join(REPO_ROOT, "scripts")
 def repo_path(*parts: str) -> str:
     return os.path.join(REPO_ROOT, *parts)
 
-#functtion to parse command line arguments for the main pipeline.
+#function to parse command line arguments for the main pipeline.
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--index", default=repo_path("data", "videos", "index_poly.json"))
