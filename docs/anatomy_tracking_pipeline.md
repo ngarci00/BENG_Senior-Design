@@ -1,5 +1,5 @@
-# Anatomy-Aware ETI Tracking Pipeline
-Run commands from the repo root. Use `python3` in this environment. (╯°□°）╯
+# Anatomy-Aware ETI Tracking Pipeline (╯°□°）╯
+Run commands from the repo root. Use `python3` in this environment. 
 
 ## Final Ensemble Run
 Use this command for the current final 50-video model:
@@ -151,4 +151,5 @@ Outputs:
 - Anatomy detector/tracker V1: annotation-derived detections plus deterministic IoU/centroid temporal association. This is not a learned ML tracker.
 - Anatomy PASS/FAIL branch: NumPy logistic regression trained on video-level anatomy features.
 - Ensemble branch: weighted late fusion by probability averaging.
+
 (´｡• ᵕ •｡`) 
