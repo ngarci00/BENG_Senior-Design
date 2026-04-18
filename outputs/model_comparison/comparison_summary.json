@@ -1,0 +1,51 @@
+{
+  "n_common_rows": 50,
+  "metrics": [
+    {
+      "model": "hybrid",
+      "n_videos": 50,
+      "accuracy": 0.84,
+      "bal_accuracy": 0.8400000000000001,
+      "precision": 0.7931034482758621,
+      "recall": 0.92,
+      "f1_score": 0.851851851851852,
+      "tp": 23.0,
+      "tn": 19.0,
+      "fp": 6.0,
+      "fn": 2.0,
+      "roc_auc": 0.9008
+    },
+    {
+      "model": "anatomy",
+      "n_videos": 50,
+      "accuracy": 0.82,
+      "bal_accuracy": 0.8200000000000001,
+      "precision": 0.8076923076923077,
+      "recall": 0.84,
+      "f1_score": 0.8235294117647058,
+      "tp": 21.0,
+      "tn": 20.0,
+      "fp": 5.0,
+      "fn": 4.0,
+      "roc_auc": 0.832
+    },
+    {
+      "model": "ensemble",
+      "n_videos": 50,
+      "accuracy": 0.84,
+      "bal_accuracy": 0.8400000000000001,
+      "precision": 0.8148148148148148,
+      "recall": 0.88,
+      "f1_score": 0.8461538461538461,
+      "tp": 22.0,
+      "tn": 20.0,
+      "fp": 5.0,
+      "fn": 3.0,
+      "roc_auc": 0.9136
+    }
+  ],
+  "n_failure_rows": 13,
+  "n_ensemble_fixes_hybrid": 4,
+  "n_hybrid_wrong_anatomy_right": 4,
+  "n_anatomy_wrong_hybrid_right": 5
+}
