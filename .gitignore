@@ -1,20 +1,23 @@
-# Environments
+#Environments
 .venv/
 venv/
 .vscode/
 __pycache__/
 
-# OS junk
+#OS junk
 .DS_Store
 **/.DS_Store
 
-# Large data (DO NOT VERSION)
+#Large data (DO NOT VERSION)
 data/videos/raw_videos/
 data/videos/rectangle_label_videos/**/frames/
 **/*.avi
 **/*.mp4
+outputs/anatomy_tracking_format/detections.csv
 
-# Training artifacts
+#Training artifacts
 runs/run_*/fold_*
 runs/run_*/*.json
+src/run_2DCNN/
+runs/run_2DCNN/
 figs/
