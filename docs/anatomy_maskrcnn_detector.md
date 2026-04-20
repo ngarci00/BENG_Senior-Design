@@ -98,4 +98,75 @@ Then extract anatomy features from the predicted tracks:
 - COCO pretrained Mask R-CNN weights are used by default. If weights are not
   cached and the environment cannot download them, use `--no-pretrained` for a
   smoke test or rerun in an environment with network access once to cache them.
-- `epiglottis` has the fewest labeled instances, so expect it have some class imbalances.
+- `epiglottis` has the fewest labeled instances, so expect class imbalance there.
+
+## Full Detector + Hybrid Ensemble Run
+
+Use this script when you want the automatic anatomy detector branch and the
+hybrid SVM branch evaluated as one ensemble pipeline:
+
+```bash
+.venv/bin/python scripts/run_detector_hybrid_ensemble.py \
+  --folds 0 1 2 3 \
+  --detector-epochs 10 \
+  --detector-batch-size 2 \
+  --predict-frame-source annotated \
+  --hybrid-weight 0.5 \
+  --output-root outputs/detector_hybrid_ensemble
+```
+
+This runs:
+
+- hybrid SVM training/evaluation through `src/run_SVM/run.py`
+- fold-specific Mask R-CNN detector training
+- detector prediction on each fold's train and validation videos
+- existing deterministic anatomy tracking on predicted detections
+- anatomy feature extraction from predicted tracks
+- anatomy classifier training/evaluation using detector-derived features
+- late fusion of hybrid and detector-anatomy probabilities
+- final model comparison
+
+If the hybrid SVM reports already exist and you only want to rerun the detector
+ensemble branch:
+
+```bash
+.venv/bin/python scripts/run_detector_hybrid_ensemble.py \
+  --skip-hybrid \
+  --hybrid-reports-dir runs/run_SVM/reports \
+  --folds 0 1 2 3 \
+  --detector-epochs 10 \
+  --detector-batch-size 2 \
+  --predict-frame-source annotated \
+  --output-root outputs/detector_hybrid_ensemble
+```
+
+For a quick wiring check without a real detector run:
+
+```bash
+.venv/bin/python scripts/run_detector_hybrid_ensemble.py \
+  --folds 0 \
+  --skip-hybrid \
+  --skip-ensemble \
+  --detector-epochs 1 \
+  --detector-batch-size 1 \
+  --detector-max-frames-per-video 1 \
+  --detector-val-max-frames-per-video 1 \
+  --detector-max-train-samples 1 \
+  --detector-max-val-samples 1 \
+  --detector-no-pretrained \
+  --detector-device cpu \
+  --detector-min-size 128 \
+  --detector-max-size 256 \
+  --predict-frame-source annotated \
+  --predict-frame-stride 999999 \
+  --predict-score-threshold 0.0 \
+  --predict-max-detections-per-frame 2 \
+  --output-root outputs/detector_hybrid_ensemble_smoke
+```
+
+Main outputs:
+
+- `outputs/detector_hybrid_ensemble/anatomy_classifier_results/reports/all_folds_results.csv`
+- `outputs/detector_hybrid_ensemble/ensemble_results/all_folds_results.csv`
+- `outputs/detector_hybrid_ensemble/model_comparison/model_metrics_summary.csv`
+- `outputs/detector_hybrid_ensemble/run_summary.json`
