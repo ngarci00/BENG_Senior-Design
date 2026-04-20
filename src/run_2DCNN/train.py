@@ -79,7 +79,7 @@ def train_2dcnn(fold, device):
             for x, y, _ in dl_val:
                 x = x.to(device)
                 if x.ndim != 5:
-                    raise RuntimeError(f"Exppected batched frames with shape (B, C, T, H, W), but got {tuple(x.shape)}")#check if the input data has the expected shape (B, C, T, H, W)
+                    raise RuntimeError(f"Expected batched frames with shape (B, C, T, H, W), but got {tuple(x.shape)}")#check if the input data has the expected shape (B, C, T, H, W)
         
                 y = y.to(device)
                 logits = model(x)
@@ -105,10 +105,6 @@ def train_2dcnn(fold, device):
             torch.save(model.state_dict(), best_path)#save the model state dict to the best path
         
         best_val_accuracy = max(best_val_accuracy,val_accuracy)#update the best validation accuracy
-        #Early stopping check based on perfect validation accuracy:
-        # if stop_if_val_acc_perfect and val_accuracy >= 1.0 - perfect_acc_tolerance:
-        #     print(f"Early stopping at epoch {epoch} due to perfect validation accuracy.")#print a message indicating early stopping
-        #     break #stop training further epochs if perfect accuracy is achieved
     #Fold summaries:
     summary = {"fold": fold, "best_f1_score": best_f1_score, "best_val_accuracy": best_val_accuracy, "best_model_path": best_path}
     #Save the summary for the current fold to a json file in the utput directory:
