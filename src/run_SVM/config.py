@@ -33,7 +33,7 @@ sample_mode_validation = "uniform" #Sampling mode for validation frames
 #Feature extraction parameters:
 num_workers = 0 #Number of DataLoader worker processes. Use 0 on macOS/sandboxed environments to avoid shared-memory worker errors
 use_pretrained_backbone = True #Whether to use a pretrained ResNet-18 backbone for feature extraction
-embedding_pool = "mean" #Pooling method to aggregate frame-level features into a video-level feature vector, can be "mean" or "max"
+embedding_pool = "max" #Pooling method to aggregate frame-level features into a video-level feature vector, can be "mean" or "max"
 
 #SVM training parameters:
 svm_kernel = "linear" #Kernel type for SVM, can be "rbf": Radial Basis Function, "poly": Polynomial, "sigmoid": Sigmoid, or "linear"
