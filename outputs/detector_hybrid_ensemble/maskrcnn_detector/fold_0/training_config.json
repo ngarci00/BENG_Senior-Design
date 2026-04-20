@@ -1,0 +1,45 @@
+{
+  "args": {
+    "index": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/data/videos/index_poly.json",
+    "splits": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/data/videos/splits_poly_50.json",
+    "fold": 0,
+    "output_dir": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/outputs/detector_hybrid_ensemble/maskrcnn_detector",
+    "target_classes": [
+      "vocal_cords",
+      "arytenoids",
+      "epiglottis",
+      "esophagus",
+      "endotracheal_tube"
+    ],
+    "epochs": 10,
+    "batch_size": 2,
+    "num_workers": 0,
+    "lr": 0.005,
+    "weight_decay": 0.0005,
+    "momentum": 0.9,
+    "device": "auto",
+    "min_size": 640,
+    "max_size": 1024,
+    "trainable_backbone_layers": 3,
+    "no_pretrained": false,
+    "allow_random_fallback": false,
+    "max_frames_per_video": null,
+    "frame_stride": 1,
+    "hflip_prob": 0.5,
+    "val_max_frames_per_video": 80,
+    "max_train_samples": null,
+    "max_val_samples": null,
+    "resume": null,
+    "save_every": 1
+  },
+  "target_classes": [
+    "vocal_cords",
+    "arytenoids",
+    "epiglottis",
+    "esophagus",
+    "endotracheal_tube"
+  ],
+  "train_frames": 32165,
+  "val_frames": 1036,
+  "device": "mps"
+}
