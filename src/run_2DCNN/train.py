@@ -1,7 +1,6 @@
 import os, json, torch, torch.nn as nn
 from torch.utils.data import DataLoader
-from config import (runs_path, epochs, batch_size, learning_rate, weight_decay, num_workers, 
-                    stop_if_val_acc_perfect, perfect_acc_tolerance, seed)
+from config import (runs_path, epochs, batch_size, learning_rate, weight_decay, num_workers, seed)
 from dataset import VideoFrameDataset
 from model import build_model
 from utils import set_seed, compute_binary_metrics, ensure_dir_exists

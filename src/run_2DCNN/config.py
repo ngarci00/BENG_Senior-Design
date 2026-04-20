@@ -39,10 +39,6 @@ sample_mode_validation = "uniform" #Mode for sampling frames during validation, 
 resize_hw = (224,224) #ImageNet backbones typically use 224x224, we can also try (112x112) for a lighter load! which is what the 3d cnn uses
 use_only_annotated_frames = True #Whether to use only annotated frames for train/val. 
 
-#For early stopping (k-fold) and if acc reaches performance threshold:
-stop_if_val_acc_perfect = False #Helps us save some time, stops once 100% val acc, set to False if you want to train for all epochs regardless of performance.
-perfect_acc_tolerance = 1e-4 #Tolerance for considering validation acc as perfect, this way we avoid with floating points like 0.99999... being considered perfect.
-
 #Model
 backbone = "resnet18" #Backbone architecture for 2D CNN, options: "resnet18", "resnet34", "resnet50", etc. ResNet-18 is a good starting point for a balance of performance and speed.
 use_pretrained_model = True #Reccommended baseline for 2D CNN, helps w/ convergence and performance

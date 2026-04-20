@@ -1,5 +1,5 @@
 import os, json, torch
-from config import kfolds, runs_path, perfect_acc_tolerance
+from config import kfolds, runs_path
 from train import train_2dcnn
 from utils import ensure_dir_exists
 
