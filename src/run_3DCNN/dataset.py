@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import numpy as np
 from skimage.io import imread
 from skimage.color import gray2rgb
-from config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed
+from config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed, resolve_data_path
 
 img_extensions = [".jpg", ".jpeg", ".png"]
 
@@ -67,7 +67,7 @@ class VideoClipDataset(torch.utils.data.Dataset):
         #Load the frames & stack them into a tensor of shape (C,T,H,W):
         images = []
         for frame in clip_names:
-            path = os.path.join(m["frames_dir"], frame)
+            path = os.path.join(resolve_data_path(m["frames_dir"]), frame)
 
             arr = imread(path) #Read the image from the path
             if arr.ndim == 2: #If the image is grayscale, convert it to RGB by duplicating the channels

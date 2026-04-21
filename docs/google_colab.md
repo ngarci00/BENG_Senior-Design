@@ -152,6 +152,10 @@ If you run without those symlinks, copy results back manually before the runtime
 - `FileNotFoundError` under `data/videos/...`
   Your Drive folder is not mounted or the symlink target is wrong.
 
+- `Training dataset is empty` when training the detector
+  Your `index_poly.json` likely contains absolute paths from another machine. Regenerate it in Colab with
+  `python src/run_3DCNN/build_index.py`, or use the newer path-normalizing code from this repo.
+
 - `cuda: False`
   The notebook is on a CPU runtime. Switch the runtime type to GPU and reconnect.
 

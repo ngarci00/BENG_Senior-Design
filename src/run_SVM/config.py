@@ -43,3 +43,18 @@ svm_C_grid = [0.1, 1.0, 10.0] #Regularization parameter for SVM, higher values m
 svm_n_jobs = 1 #Number of parallel jobs for GridSearchCV. Use 1 on macOS/sandboxed environments to avoid process-spawn errors
 #if we use rbf then we need to specify gamma:
 svm_gamma_grid = ["scale", "auto"] #Kernel coefficient for RBF, can be "scale" (1 / n_features) or "auto" (1 / n_features)
+
+
+def resolve_data_path(path: str) -> str:
+    value = str(path or "").strip()
+    if not value:
+        return ""
+    if os.path.exists(value):
+        return os.path.abspath(value)
+    normalized = value.replace("\\", "/")
+    marker = "data/videos/"
+    idx = normalized.lower().find(marker)
+    if idx != -1:
+        suffix = normalized[idx + len(marker):]
+        return os.path.join(data_dir, *[part for part in suffix.split("/") if part])
+    return value

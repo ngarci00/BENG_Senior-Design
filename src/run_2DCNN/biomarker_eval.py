@@ -7,7 +7,7 @@ Post-processing script to quantify model performance stratified by biomarker pre
 import os, json, csv, argparse
 from typing import Dict, List, Optional
 import numpy as np
-from config import runs_path, kfolds, index_json_path
+from config import runs_path, kfolds, index_json_path, resolve_data_path
 
 
 #Biomarkers of interest and their label synonyms in case we misspelled them during annotation.
@@ -111,6 +111,7 @@ def _video_presence_rates(ann_dir: Optional[str]) -> Dict[str, float]:
     """ 
     #If no annotation directory or it doesn't exist, we return nan for all biomarkers/annotations
     #Which defaults to treating them as unknown/absent in the .csv summary output.
+    ann_dir = resolve_data_path(ann_dir)
     if not ann_dir or not os.path.isdir(ann_dir):
         return {b: float("nan") for b in BIOMARKERS}
 

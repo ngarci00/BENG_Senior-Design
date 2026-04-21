@@ -18,7 +18,7 @@ if SRC_DIR not in sys.path:
 from anatomy_detection import config
 from anatomy_detection.dataset import LabelMeMaskDataset, collate_detection_batch, target_classes_from_args
 from anatomy_detection.model import build_maskrcnn
-from anatomy_tracking.io import ensure_dir, write_json
+from anatomy_tracking.io import ensure_dir, load_index, write_json
 
 
 def parse_args() -> argparse.Namespace:
@@ -217,9 +217,19 @@ def main() -> None:
     if args.max_val_samples is not None:
         val_ds.samples = val_ds.samples[: int(args.max_val_samples)]
     if not train_ds:
-        raise RuntimeError("Training dataset is empty.")
+        first_meta = next(iter(load_index(args.index)), {})
+        raise RuntimeError(
+            "Training dataset is empty. This usually means the index file points to annotation/frame directories "
+            "that do not exist on the current machine. Example resolved paths: "
+            f"frames_dir={first_meta.get('frames_dir', '')!r}, ann_dir={first_meta.get('ann_dir', '')!r}"
+        )
     if not val_ds:
-        raise RuntimeError("Validation dataset is empty.")
+        first_meta = next(iter(load_index(args.index)), {})
+        raise RuntimeError(
+            "Validation dataset is empty. This usually means the index file points to annotation/frame directories "
+            "that do not exist on the current machine. Example resolved paths: "
+            f"frames_dir={first_meta.get('frames_dir', '')!r}, ann_dir={first_meta.get('ann_dir', '')!r}"
+        )
 
     print(f"Train frames: {len(train_ds)} | Val frames: {len(val_ds)}", flush=True)
     train_loader = DataLoader(

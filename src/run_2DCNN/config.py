@@ -44,3 +44,18 @@ use_only_annotated_frames = True #Whether to use only annotated frames for train
 #Model
 backbone = "resnet18" #Backbone architecture for 2D CNN, options: "resnet18", "resnet34", "resnet50", etc. ResNet-18 is a good starting point for a balance of performance and speed.
 use_pretrained_model = True #Reccommended baseline for 2D CNN, helps w/ convergence and performance
+
+
+def resolve_data_path(path: str) -> str:
+    value = str(path or "").strip()
+    if not value:
+        return ""
+    if os.path.exists(value):
+        return os.path.abspath(value)
+    normalized = value.replace("\\", "/")
+    marker = "data/videos/"
+    idx = normalized.lower().find(marker)
+    if idx != -1:
+        suffix = normalized[idx + len(marker):]
+        return os.path.join(data_dir, *[part for part in suffix.split("/") if part])
+    return value

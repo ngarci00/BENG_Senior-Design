@@ -50,3 +50,18 @@ perfect_acc_tolerance = 1e-4 #Tolerance for considering validation acc as perfec
 
 #Model
 use_pretrained_model = False #we aren't using a pretrained model in this case.
+
+
+def resolve_data_path(path: str) -> str:
+    value = str(path or "").strip()
+    if not value:
+        return ""
+    if os.path.exists(value):
+        return os.path.abspath(value)
+    normalized = value.replace("\\", "/")
+    marker = "data/videos/"
+    idx = normalized.lower().find(marker)
+    if idx != -1:
+        suffix = normalized[idx + len(marker):]
+        return os.path.join(data_dir, *[part for part in suffix.split("/") if part])
+    return value
