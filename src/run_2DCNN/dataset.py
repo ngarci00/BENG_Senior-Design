@@ -4,7 +4,30 @@ import numpy as np
 from typing import List, Tuple
 from skimage.io import imread
 from skimage.color import gray2rgb
-from config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed, frames_per_video_train, frames_per_video_validation, sample_mode_train, sample_mode_validation
+try:
+    from .config import (
+        index_json_path,
+        splits_json_path,
+        resize_hw,
+        use_only_annotated_frames,
+        seed,
+        frames_per_video_train,
+        frames_per_video_validation,
+        sample_mode_train,
+        sample_mode_validation,
+    )
+except ImportError:
+    from config import (
+        index_json_path,
+        splits_json_path,
+        resize_hw,
+        use_only_annotated_frames,
+        seed,
+        frames_per_video_train,
+        frames_per_video_validation,
+        sample_mode_train,
+        sample_mode_validation,
+    )
 
 img_extensions = [".jpg", ".jpeg", ".png"]
 

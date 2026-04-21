@@ -1,11 +1,13 @@
-import os 
+import os
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 #Labels:
 LABEL_TO_INT = {'FAIL': 0, 'PASS': 1} #As the name suggests, label to integer mapping
 INT_TO_LABEL = {0: 'FAIL', 1: 'PASS'} #Integer to label mapping
 
 #Data paths:
-data_dir = os.path.join("data", "videos") #Base directory for video data
+data_dir = os.path.join(REPO_ROOT, "data", "videos") #Base directory for video data
 raw_frames_dir = os.path.join(data_dir, "raw_videos") #Directory for raw video frames
 # ann_dir = os.path.join(data_dir, "rectangle_label_videos") #Directory for annotation JSON files
 ann_dir = os.path.join(data_dir, "polygon_label_videos") #Directory for annotation JSON files #<- change to polygon_label_videos if using polygon annotations
@@ -18,7 +20,7 @@ index_json_path = os.path.join(data_dir, "index_poly.json") #Path to index JSON 
 splits_json_path = os.path.join(data_dir, "splits_poly_20.json") #Path to splits JSON file for train/val splits
 
 #Output directories:
-runs_path = os.path.join("runs","run_2DCNN") #Base directory for training runs
+runs_path = os.path.join(REPO_ROOT, "runs", "run_2DCNN") #Base directory for training runs
 
 #Model & Training Parameters:
 kfolds = 4 #Number of folds for cross-validation
@@ -42,4 +44,3 @@ use_only_annotated_frames = True #Whether to use only annotated frames for train
 #Model
 backbone = "resnet18" #Backbone architecture for 2D CNN, options: "resnet18", "resnet34", "resnet50", etc. ResNet-18 is a good starting point for a balance of performance and speed.
 use_pretrained_model = True #Reccommended baseline for 2D CNN, helps w/ convergence and performance
-

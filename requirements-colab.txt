@@ -1,0 +1,8 @@
+# Colab already includes Python and usually ships PyTorch/torchvision.
+# Install these project-level dependencies on top of the runtime.
+joblib
+matplotlib
+numpy<2
+Pillow
+scikit-image
+scikit-learn

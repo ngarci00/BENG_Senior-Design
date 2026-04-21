@@ -1,10 +1,12 @@
 #Config file for SVM model, contains all the parameters and paths needed for feature extraction and SVM training. 
 import os
 
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
 #data paths:
-data_dir = os.path.join("data", "videos") #Base directory for video data
+data_dir = os.path.join(REPO_ROOT, "data", "videos") #Base directory for video data
 run_name = "run_SVM"
-runs_dir = os.path.join("runs", run_name) #Directory to save SVM training runs, where run_name can be something like "svm_run_1"
+runs_dir = os.path.join(REPO_ROOT, "runs", run_name) #Directory to save SVM training runs, where run_name can be something like "svm_run_1"
 features_dir = os.path.join(runs_dir, "svm_features") #Directory to save extracted features for
 models_dir = os.path.join(runs_dir, "models") #Directory to save trained SVM models for each fold
 reports_dir = os.path.join(runs_dir, "reports") #Directory to save training reports and metrics for each fold
