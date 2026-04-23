@@ -47,17 +47,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--detector-device", default="auto", choices=["auto", "cpu", "cuda", "mps"])
     parser.add_argument("--detector-min-size", type=int, default=320)
     parser.add_argument("--detector-max-size", type=int, default=512)
-    parser.add_argument("--detector-trainable-backbone-layers", type=int, default=1)
     parser.add_argument("--detector-frame-stride", type=int, default=1)
-    parser.add_argument("--detector-max-frames-per-video", type=int, default=8)
-    parser.add_argument("--detector-val-max-frames-per-video", type=int, default=8)
-    parser.add_argument("--detector-max-train-samples", type=int, default=None)
+    parser.add_argument("--detector-max-frames-per-video", type=int, default=None)
+    parser.add_argument("--detector-val-max-frames-per-video", type=int, default=32)
+    parser.add_argument("--detector-max-train-samples", type=int, default=16)
     parser.add_argument("--detector-max-val-samples", type=int, default=None)
     parser.add_argument("--detector-no-pretrained", action="store_true")
     parser.add_argument("--detector-allow-random-fallback", action="store_true")
 
     parser.add_argument("--predict-frame-source", default="annotated", choices=["annotated", "all"])
+    parser.add_argument("--predict-batch-size", type=int, default=2)
     parser.add_argument("--predict-frame-stride", type=int, default=1)
+    parser.add_argument("--predict-progress-every", type=int, default=100)
     parser.add_argument("--predict-score-threshold", type=float, default=0.5)
     parser.add_argument("--predict-mask-threshold", type=float, default=0.5)
     parser.add_argument("--predict-max-detections-per-frame", type=int, default=20)
@@ -105,8 +106,6 @@ def detector_train_command(args: argparse.Namespace, fold: int, detector_dir: st
         str(args.detector_min_size),
         "--max-size",
         str(args.detector_max_size),
-        "--trainable-backbone-layers",
-        str(args.detector_trainable_backbone_layers),
         "--frame-stride",
         str(args.detector_frame_stride),
         "--val-max-frames-per-video",
@@ -142,10 +141,14 @@ def detector_predict_command(
         str(fold),
         "--split",
         split,
+        "--batch-size",
+        str(args.predict_batch_size),
         "--frame-source",
         args.predict_frame_source,
         "--frame-stride",
         str(args.predict_frame_stride),
+        "--progress-every",
+        str(args.predict_progress_every),
         "--score-threshold",
         str(args.predict_score_threshold),
         "--mask-threshold",

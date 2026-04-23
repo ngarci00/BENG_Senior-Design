@@ -41,5 +41,5 @@
   ],
   "train_frames": 294,
   "val_frames": 104,
-  "device": "mps"
+  "device": "cpu"
 }

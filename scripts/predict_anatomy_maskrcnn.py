@@ -38,8 +38,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--score-threshold", type=float, default=0.5)
     parser.add_argument("--mask-threshold", type=float, default=0.5)
     parser.add_argument("--max-detections-per-frame", type=int, default=20)
+    parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--frame-source", default="all", choices=["all", "annotated"])
     parser.add_argument("--frame-stride", type=int, default=1)
+    parser.add_argument("--progress-every", type=int, default=100)
     parser.add_argument("--min-size", type=int, default=None)
     parser.add_argument("--max-size", type=int, default=None)
     return parser.parse_args()
@@ -59,8 +61,8 @@ def load_checkpoint(path: str) -> Dict:
     return torch.load(path, map_location="cpu", weights_only=False)
 
 
-def image_tensor(path: str) -> torch.Tensor:
-    arr = np.asarray(Image.open(path).convert("RGB"), dtype=np.float32) / 255.0
+def image_tensor(image: Image.Image) -> torch.Tensor:
+    arr = np.asarray(image.convert("RGB"), dtype=np.float32) / 255.0
     return torch.from_numpy(arr).permute(2, 0, 1).contiguous()
 
 
@@ -188,6 +190,12 @@ def output_rows_for_frame(
     return rows
 
 
+def batched(items: Sequence[Dict], batch_size: int) -> Iterable[Sequence[Dict]]:
+    batch_size = max(int(batch_size), 1)
+    for start in range(0, len(items), batch_size):
+        yield items[start : start + batch_size]
+
+
 def main() -> None:
     args = parse_args()
     checkpoint = load_checkpoint(args.checkpoint)
@@ -217,25 +225,38 @@ def main() -> None:
     print(f"Running detector on {len(video_ids)} videos with device={device}", flush=True)
     with torch.no_grad():
         for video_idx, video_id in enumerate(video_ids, start=1):
+            frames = list(iter_frames(meta_map[video_id], args.frame_source, args.frame_stride))
+            total_frames = len(frames)
             frame_count = 0
-            for frame in iter_frames(meta_map[video_id], args.frame_source, args.frame_stride):
-                image = Image.open(frame["image_path"]).convert("RGB")
-                width, height = image.size
-                tensor = image_tensor(frame["image_path"]).to(device)
-                output = model([tensor])[0]
-                rows.extend(
-                    output_rows_for_frame(
-                        frame=frame,
-                        output=output,
-                        id_to_class=id_to_class,
-                        image_width=width,
-                        image_height=height,
-                        score_threshold=args.score_threshold,
-                        mask_threshold=args.mask_threshold,
-                        max_detections=args.max_detections_per_frame,
+            print(f"{video_idx}/{len(video_ids)} {video_id}: starting {total_frames} frames", flush=True)
+            for frame_batch in batched(frames, args.batch_size):
+                tensors = []
+                frame_infos = []
+                for frame in frame_batch:
+                    image = Image.open(frame["image_path"]).convert("RGB")
+                    width, height = image.size
+                    tensors.append(image_tensor(image).to(device))
+                    frame_infos.append((frame, width, height))
+                outputs = model(tensors)
+                for (frame, width, height), output in zip(frame_infos, outputs):
+                    rows.extend(
+                        output_rows_for_frame(
+                            frame=frame,
+                            output=output,
+                            id_to_class=id_to_class,
+                            image_width=width,
+                            image_height=height,
+                            score_threshold=args.score_threshold,
+                            mask_threshold=args.mask_threshold,
+                            max_detections=args.max_detections_per_frame,
+                        )
                     )
-                )
-                frame_count += 1
+                    frame_count += 1
+                    if args.progress_every > 0 and frame_count % args.progress_every == 0:
+                        print(
+                            f"{video_idx}/{len(video_ids)} {video_id}: processed {frame_count}/{total_frames} frames",
+                            flush=True,
+                        )
             print(f"{video_idx}/{len(video_ids)} {video_id}: processed {frame_count} frames", flush=True)
 
     output_csv = os.path.join(args.output_dir, "detections.csv")
