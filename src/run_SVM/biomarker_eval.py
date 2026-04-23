@@ -110,7 +110,6 @@ def _video_presence_rates(ann_dir: Optional[str]) -> Dict[str, float]:
     """ 
     #If no annotation directory or it doesn't exist, we return nan for all biomarkers/annotations
     #Which defaults to treating them as unknown/absent in the .csv summary output.
-    ann_dir = config.resolve_data_path(ann_dir)
     if not ann_dir or not os.path.isdir(ann_dir):
         return {b: float("nan") for b in BIOMARKERS}
 

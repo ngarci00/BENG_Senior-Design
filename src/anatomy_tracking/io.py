@@ -65,40 +65,8 @@ def label_from_meta(meta: Dict) -> int:
 def label_name_from_meta(meta: Dict) -> str:
     return "PASS" if label_from_meta(meta) == 1 else "FAIL"
 
-def resolve_repo_data_path(path: str) -> str:
-    value = str(path or "").strip()
-    if not value:
-        return ""
-
-    if os.path.exists(value):
-        return os.path.abspath(value)
-
-    repo_candidate = os.path.join(config.REPO_ROOT, value)
-    if os.path.exists(repo_candidate):
-        return os.path.abspath(repo_candidate)
-
-    normalized = value.replace("\\", "/")
-    marker = "data/videos/"
-    idx = normalized.lower().find(marker)
-    if idx != -1:
-        suffix = normalized[idx + len(marker):]
-        suffix_parts = [part for part in suffix.split("/") if part]
-        return os.path.abspath(os.path.join(config.DATA_DIR, *suffix_parts))
-
-    return value
-
-def normalize_index_meta(meta: Dict) -> Dict:
-    item = dict(meta)
-    for key in ("frames_dir", "ann_dir"):
-        if key in item and item[key]:
-            item[key] = resolve_repo_data_path(item[key])
-    return item
-
 def load_index(path: str) -> List[Dict]:
-    index = read_json(path)
-    if not isinstance(index, list):
-        return index
-    return [normalize_index_meta(item) if isinstance(item, dict) else item for item in index]
+    return read_json(path)
 
 def meta_by_video(index: Sequence[Dict]) -> Dict[str, Dict]:
     return {str(item["video_id"]): item for item in index}
@@ -112,7 +80,7 @@ def iter_video_meta(index: Sequence[Dict], max_videos: Optional[int] = None) -> 
         yield meta
 
 def annotation_paths_for_video(meta: Dict) -> List[str]:
-    ann_dir = resolve_repo_data_path(meta.get("ann_dir", ""))
+    ann_dir = meta.get("ann_dir", "")
     if not ann_dir or not os.path.isdir(ann_dir):
         return []
 
@@ -135,12 +103,12 @@ def annotation_paths_for_video(meta: Dict) -> List[str]:
 def image_path_for_annotation(meta: Dict, ann: Dict, ann_path: str) -> str:
     image_path = ann.get("imagePath") or ""
     if os.path.isabs(image_path):
-        return resolve_repo_data_path(image_path)
+        return image_path
 
     candidates = []
     if image_path:
         candidates.append(os.path.normpath(os.path.join(os.path.dirname(ann_path), image_path)))
-    frames_dir = resolve_repo_data_path(meta.get("frames_dir", ""))
+    frames_dir = meta.get("frames_dir", "")
     frame_name = os.path.splitext(os.path.basename(ann_path))[0] + ".jpg"
     if frames_dir:
         candidates.append(os.path.join(frames_dir, frame_name))

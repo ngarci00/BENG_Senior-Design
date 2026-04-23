@@ -1,12 +1,10 @@
 #Config file for SVM model, contains all the parameters and paths needed for feature extraction and SVM training. 
 import os
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-
 #data paths:
-data_dir = os.path.join(REPO_ROOT, "data", "videos") #Base directory for video data
+data_dir = os.path.join("data", "videos") #Base directory for video data
 run_name = "run_SVM"
-runs_dir = os.path.join(REPO_ROOT, "runs", run_name) #Directory to save SVM training runs, where run_name can be something like "svm_run_1"
+runs_dir = os.path.join("runs", run_name) #Directory to save SVM training runs, where run_name can be something like "svm_run_1"
 features_dir = os.path.join(runs_dir, "svm_features") #Directory to save extracted features for
 models_dir = os.path.join(runs_dir, "models") #Directory to save trained SVM models for each fold
 reports_dir = os.path.join(runs_dir, "reports") #Directory to save training reports and metrics for each fold
@@ -43,18 +41,3 @@ svm_C_grid = [0.1, 1.0, 10.0] #Regularization parameter for SVM, higher values m
 svm_n_jobs = 1 #Number of parallel jobs for GridSearchCV. Use 1 on macOS/sandboxed environments to avoid process-spawn errors
 #if we use rbf then we need to specify gamma:
 svm_gamma_grid = ["scale", "auto"] #Kernel coefficient for RBF, can be "scale" (1 / n_features) or "auto" (1 / n_features)
-
-
-def resolve_data_path(path: str) -> str:
-    value = str(path or "").strip()
-    if not value:
-        return ""
-    if os.path.exists(value):
-        return os.path.abspath(value)
-    normalized = value.replace("\\", "/")
-    marker = "data/videos/"
-    idx = normalized.lower().find(marker)
-    if idx != -1:
-        suffix = normalized[idx + len(marker):]
-        return os.path.join(data_dir, *[part for part in suffix.split("/") if part])
-    return value

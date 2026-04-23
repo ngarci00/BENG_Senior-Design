@@ -4,32 +4,7 @@ import numpy as np
 from typing import List, Tuple
 from skimage.io import imread
 from skimage.color import gray2rgb
-try:
-    from .config import (
-        index_json_path,
-        splits_json_path,
-        resize_hw,
-        use_only_annotated_frames,
-        seed,
-        frames_per_video_train,
-        frames_per_video_validation,
-        sample_mode_train,
-        sample_mode_validation,
-        resolve_data_path,
-    )
-except ImportError:
-    from config import (
-        index_json_path,
-        splits_json_path,
-        resize_hw,
-        use_only_annotated_frames,
-        seed,
-        frames_per_video_train,
-        frames_per_video_validation,
-        sample_mode_train,
-        sample_mode_validation,
-        resolve_data_path,
-    )
+from config import index_json_path, splits_json_path, resize_hw, use_only_annotated_frames, seed, frames_per_video_train, frames_per_video_validation, sample_mode_train, sample_mode_validation
 
 img_extensions = [".jpg", ".jpeg", ".png"]
 
@@ -92,7 +67,7 @@ class VideoFrameDataset(torch.utils.data.Dataset):
         images: List[torch.Tensor] = []
 
         for frame in frame_names:
-            path = os.path.join(resolve_data_path(m["frames_dir"]), frame) #Get the full path to the frame image
+            path = os.path.join(m["frames_dir"], frame) #Get the full path to the frame image
             arr = imread(path) #Read the image as a numpy array
             if arr.ndim == 2: #If the image is grayscale, convert it to RGB by duplicating the single channel
                 arr = gray2rgb(arr)

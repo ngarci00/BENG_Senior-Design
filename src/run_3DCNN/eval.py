@@ -29,14 +29,6 @@ def _write_csv(path: str, rows: List[Dict]) -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-
-def _default_device() -> str:
-    if torch.cuda.is_available():
-        return "cuda"
-    if getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
-        return "mps"
-    return "cpu"
-
 #Confusion Matrix Plotting
 def _save_confusion_matrix(cm: np.ndarray, out_png: str, title: str) -> None:
     _ensure_dir(os.path.dirname(out_png))
@@ -215,7 +207,7 @@ def evaluate_folds(
 ) -> Dict:
     """Evaluate requested folds and write per-fold plus aggregate reports."""
     if device is None:
-        device = _default_device()
+        device = "mps" if torch.backends.mps.is_available() else "cuda" #MPS for Apple Silicon, otherwise cuda <- MPS : Metal Performance Shaders
     else:
         device = device.lower()
         if device not in ["cpu", "mps", "cuda"]:

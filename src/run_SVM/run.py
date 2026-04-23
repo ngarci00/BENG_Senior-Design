@@ -37,12 +37,7 @@ def time_training(fold: int) -> float:
 def main():
     pipeline_start = time.perf_counter()
 
-    if torch.cuda.is_available():
-        device = "cuda"
-    elif getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cpu"
+    device = "mps" if torch.backends.mps.is_available() else "cpu"
     print(f"Using device: {device}")
     folds = list(range(int(config.kfolds)))
     train_times = []

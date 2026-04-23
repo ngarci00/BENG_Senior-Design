@@ -43,15 +43,8 @@ def _video_to_embedding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Te
     return z_video
 
 def extract_fold(fold:int, device:str) -> None:
-    # Keep the borrowed 2D dataset aligned with the SVM experiment config.
-    run2d_dataset.index_json_path = config.index_json_path
-    run2d_dataset.splits_json_path = config.splits_json_path
+    # Ensure the 2D dataset uses the same target resize as this SVM run config.
     run2d_dataset.resize_hw = config.resize_hw
-    run2d_dataset.use_only_annotated_frames = config.use_only_annotated_frames
-    run2d_dataset.frames_per_video_train = config.frames_per_video_train
-    run2d_dataset.frames_per_video_validation = config.frames_per_video_validation
-    run2d_dataset.sample_mode_train = config.sample_mode_train
-    run2d_dataset.sample_mode_validation = config.sample_mode_validation
     VideoFrameDataset = run2d_dataset.VideoFrameDataset
 
     ensure_dir(config.features_dir) #Ensure the output directory exists
@@ -97,12 +90,7 @@ def extract_fold(fold:int, device:str) -> None:
     print(f"Train features shape: {X_train.shape}, Train labels shape: {y_train.shape}, Val features shape: {X_val.shape}, Val labels shape: {y_val.shape}")
 
 def main():
-    if torch.cuda.is_available():
-        device = "cuda"
-    elif getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
-        device = "mps"
-    else:
-        device = "cpu"
+    device = "mps" if torch.backends.mps.is_available() else "cpu" #Use MPS (Apple Silicon) if available, otherwise fall back to CPU
     print(f"Using device: {device}")
     for fold in range(config.kfolds):
         extract_fold(fold, device)
