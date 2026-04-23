@@ -57,7 +57,11 @@ def pick_device(name: str) -> torch.device:
     if torch.cuda.is_available():
         return torch.device("cuda")
     if getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
-        return torch.device("mps")
+        print(
+            "MPS is available but Mask R-CNN training can produce non-finite mask losses on MPS in this pipeline; "
+            "defaulting to CPU. Pass --device mps to override.",
+            flush=True,
+        )
     return torch.device("cpu")
 
 
@@ -85,15 +89,21 @@ def train_one_epoch(model, loader, optimizer, device: torch.device, epoch: int) 
 
         loss_dict = model(images, targets)
         loss = sum(loss_value for loss_value in loss_dict.values())
+        detached_losses = {key: float(value.detach().cpu()) for key, value in loss_dict.items()}
+        loss_float = float(loss.detach().cpu())
+        if not math.isfinite(loss_float) or any(not math.isfinite(value) for value in detached_losses.values()):
+            raise RuntimeError(
+                f"Non-finite training loss at epoch {epoch} batch {batch_idx} on device={device}: "
+                f"{detached_losses}. If you are using MPS, rerun with --device cpu."
+            )
 
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
 
-        loss_float = float(loss.detach().cpu())
         batch_losses.append(loss_float)
-        for key, value in loss_dict.items():
-            component_sums[key] = component_sums.get(key, 0.0) + float(value.detach().cpu())
+        for key, value in detached_losses.items():
+            component_sums[key] = component_sums.get(key, 0.0) + value
 
         if batch_idx % 20 == 0 or batch_idx == len(loader):
             print(f"epoch {epoch} batch {batch_idx}/{len(loader)} loss={mean_loss(batch_losses):.4f}", flush=True)
@@ -111,14 +121,21 @@ def validation_loss(model, loader, device: torch.device) -> Dict[str, float]:
     batch_losses: List[float] = []
     component_sums: Dict[str, float] = {}
 
-    for images, targets in loader:
+    for batch_idx, (images, targets) in enumerate(loader, start=1):
         images = [image.to(device) for image in images]
         targets = move_targets(targets, device)
         loss_dict = model(images, targets)
         loss = sum(loss_value for loss_value in loss_dict.values())
-        batch_losses.append(float(loss.detach().cpu()))
-        for key, value in loss_dict.items():
-            component_sums[key] = component_sums.get(key, 0.0) + float(value.detach().cpu())
+        detached_losses = {key: float(value.detach().cpu()) for key, value in loss_dict.items()}
+        loss_float = float(loss.detach().cpu())
+        if not math.isfinite(loss_float) or any(not math.isfinite(value) for value in detached_losses.values()):
+            raise RuntimeError(
+                f"Non-finite validation loss at batch {batch_idx} on device={device}: "
+                f"{detached_losses}. If you are using MPS, rerun with --device cpu."
+            )
+        batch_losses.append(loss_float)
+        for key, value in detached_losses.items():
+            component_sums[key] = component_sums.get(key, 0.0) + value
 
     model.train(was_training)
     metrics = {"val_loss": mean_loss(batch_losses)}

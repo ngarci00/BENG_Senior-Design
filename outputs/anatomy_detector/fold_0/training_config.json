@@ -3,7 +3,7 @@
     "index": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/data/videos/index_poly.json",
     "splits": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/data/videos/splits_poly_50.json",
     "fold": 0,
-    "output_dir": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/outputs/detector_hybrid_ensemble/maskrcnn_detector",
+    "output_dir": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/outputs/anatomy_detector",
     "target_classes": [
       "vocal_cords",
       "arytenoids",
@@ -12,7 +12,7 @@
       "endotracheal_tube"
     ],
     "epochs": 10,
-    "batch_size": 1,
+    "batch_size": 2,
     "num_workers": 0,
     "lr": 0.005,
     "weight_decay": 0.0005,
@@ -41,5 +41,5 @@
   ],
   "train_frames": 294,
   "val_frames": 104,
-  "device": "mps"
+  "device": "cpu"
 }
