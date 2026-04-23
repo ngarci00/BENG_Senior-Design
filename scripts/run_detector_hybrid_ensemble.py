@@ -43,13 +43,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-detector-training", action="store_true")
     parser.add_argument("--skip-detector-prediction", action="store_true")
     parser.add_argument("--detector-epochs", type=int, default=10)
-    parser.add_argument("--detector-batch-size", type=int, default=2)
+    parser.add_argument("--detector-batch-size", type=int, default=1)
     parser.add_argument("--detector-device", default="auto", choices=["auto", "cpu", "cuda", "mps"])
-    parser.add_argument("--detector-min-size", type=int, default=640)
-    parser.add_argument("--detector-max-size", type=int, default=1024)
+    parser.add_argument("--detector-min-size", type=int, default=320)
+    parser.add_argument("--detector-max-size", type=int, default=512)
+    parser.add_argument("--detector-trainable-backbone-layers", type=int, default=1)
     parser.add_argument("--detector-frame-stride", type=int, default=1)
-    parser.add_argument("--detector-max-frames-per-video", type=int, default=None)
-    parser.add_argument("--detector-val-max-frames-per-video", type=int, default=80)
+    parser.add_argument("--detector-max-frames-per-video", type=int, default=8)
+    parser.add_argument("--detector-val-max-frames-per-video", type=int, default=8)
     parser.add_argument("--detector-max-train-samples", type=int, default=None)
     parser.add_argument("--detector-max-val-samples", type=int, default=None)
     parser.add_argument("--detector-no-pretrained", action="store_true")
@@ -104,6 +105,8 @@ def detector_train_command(args: argparse.Namespace, fold: int, detector_dir: st
         str(args.detector_min_size),
         "--max-size",
         str(args.detector_max_size),
+        "--trainable-backbone-layers",
+        str(args.detector_trainable_backbone_layers),
         "--frame-stride",
         str(args.detector_frame_stride),
         "--val-max-frames-per-video",
