@@ -27,13 +27,13 @@ esophagus
 // to convert the videos into images (frames) please use the command, if confused use this webstie:
 https://github.com/wkentaro/labelme/blob/main/examples/video_annotation/README.md 
 
-video-toimg nameofvideo.avi
+.venv/bin/video-toimg nameofvideo.avi
 
 --> If for some reason the command doesn't work please use the following command to force the path to be using the .venv folder
 
 source .venv/bin/activate
 
---- then the line above ( video-toimg nameofvideo.avi ) ---
+--- then the line above ( .venv/bin/video-toimg nameofvideo.avi ) ---
 
 --> To open files using the terminal and IINA use the following command:
 
@@ -41,8 +41,11 @@ open -a IINA name_file.avi
 
 --> STEPS TO TURN JSON FILES INTO VIEWABLE VIDEOS:
 1. Run the script "normrectangles.py" in the terminal ex: python3 normrectangles.py "input_folder"
-2. Run the command: labelmetk json-to-visualization "input_folder" -- this should produce a folder with a .export at the end
-3. Run the following command to turn the frames into a video: video-fromimg -i "name_file.export/*/visualization.jpg" --fps 30 output_file.mp4
+2. Use the repo exporter instead of labelmetk:
+   python3 scripts/export_labelme_visualization.py "input_folder"
+   This produces a folder with a .export suffix.
+3. Run the following command to turn the frames into a video:
+   .venv/bin/video-fromimg -i "name_file.export/*/visualization.jpg" --fps 30 output_file.mp4
 --------
 
 Current List: (12 Good/ 9 Bad) <- please update as we add more videos 
@@ -112,5 +115,4 @@ extra
 54. Middle... good 
 
 ---> Regarding raw_videos and frames created, please do all so locally. videos should be in the Google Drive Folder 
-
 

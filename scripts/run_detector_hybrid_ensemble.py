@@ -44,7 +44,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-detector-prediction", action="store_true")
     parser.add_argument("--detector-epochs", type=int, default=10)
     parser.add_argument("--detector-batch-size", type=int, default=1)
-    parser.add_argument("--detector-device", default="auto", choices=["auto", "cpu", "cuda", "mps"])
+    parser.add_argument("--detector-device", default="cpu", choices=["auto", "cpu", "cuda", "mps"])
     parser.add_argument("--detector-min-size", type=int, default=320)
     parser.add_argument("--detector-max-size", type=int, default=512)
     parser.add_argument("--detector-frame-stride", type=int, default=1)
