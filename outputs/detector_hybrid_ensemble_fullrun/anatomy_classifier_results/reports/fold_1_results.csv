@@ -1,0 +1,14 @@
+fold,video_id,true_label,predicted_label,predicted_prob,model
+1,41.MG,1,1,0.9978457233333599,anatomy_classifier
+1,6.RG,1,1,0.9792792084485601,anatomy_classifier
+1,11.MG,1,1,0.6265741659036927,anatomy_classifier
+1,2.MG,1,1,0.9342646859410494,anatomy_classifier
+1,18.RG,1,1,0.9753046666451938,anatomy_classifier
+1,49.RG,1,1,0.9926254365055809,anatomy_classifier
+1,32.RB,0,0,0.0028529881062510165,anatomy_classifier
+1,53.RB,0,0,0.0003740179965148332,anatomy_classifier
+1,29.CB,0,0,0.0059053409326970075,anatomy_classifier
+1,13.MB,0,1,0.8379676040859085,anatomy_classifier
+1,37.LB,0,0,9.750030977509696e-06,anatomy_classifier
+1,39.LB,0,0,0.01042732500570738,anatomy_classifier
+1,35.RB,0,0,1.066216395761848e-05,anatomy_classifier

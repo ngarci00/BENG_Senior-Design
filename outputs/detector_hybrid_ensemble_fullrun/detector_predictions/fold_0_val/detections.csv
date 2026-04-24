@@ -1,0 +1,1 @@
+video_id,true_label,frame_id,frame_name,class_name,original_label,confidence,shape_type,bbox_x,bbox_y,bbox_w,bbox_h,centroid_x,centroid_y,area,image_width,image_height,ann_path,image_path,points_json
