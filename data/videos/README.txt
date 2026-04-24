@@ -42,10 +42,10 @@ open -a IINA name_file.avi
 --> STEPS TO TURN JSON FILES INTO VIEWABLE VIDEOS:
 1. Run the script "normrectangles.py" in the terminal ex: python3 normrectangles.py "input_folder"
 2. Use the repo exporter instead of labelmetk:
-   python3 scripts/export_labelme_visualization.py "input_folder"
+   .venv/bin/python scripts/export_labelme_visualization.py "input_folder"
    This produces a folder with a .export suffix.
-3. Run the following command to turn the frames into a video:
-   .venv/bin/video-fromimg -i "name_file.export/*/visualization.jpg" --fps 30 output_file.mp4
+3. Run the repo-local replacement for video-fromimg:
+   .venv/bin/python scripts/video_from_images.py output_file.mp4 -i "name_file.export/*/visualization.jpg" --fps 30
 --------
 
 Current List: (12 Good/ 9 Bad) <- please update as we add more videos 
@@ -115,4 +115,3 @@ extra
 54. Middle... good 
 
 ---> Regarding raw_videos and frames created, please do all so locally. videos should be in the Google Drive Folder 
-
