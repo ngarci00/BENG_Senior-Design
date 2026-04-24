@@ -1,0 +1,12 @@
+{
+  "folds": [
+    0
+  ],
+  "index": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/data/videos/index_poly.json",
+  "splits": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/data/videos/splits_poly_50.json",
+  "hybrid_reports_dir": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/runs/run_SVM/reports",
+  "anatomy_reports_dir": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/outputs/detector_hybrid_ensemble/anatomy_classifier_results/reports",
+  "ensemble_dir": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/outputs/detector_hybrid_ensemble/ensemble_results",
+  "comparison_dir": "/Users/nicolasgarciacallejas/Documents/GitHub/BENG_Senior-Design/outputs/detector_hybrid_ensemble/model_comparison",
+  "predict_frame_source": "annotated"
+}

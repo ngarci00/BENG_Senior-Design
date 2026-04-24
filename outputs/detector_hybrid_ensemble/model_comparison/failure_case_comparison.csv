@@ -1,0 +1,2 @@
+fold,video_id,true_label,hybrid_predicted_label,hybrid_predicted_prob,hybrid_correct,anatomy_predicted_label,anatomy_predicted_prob,anatomy_correct,ensemble_predicted_label,ensemble_predicted_prob,ensemble_correct,ensemble_fixes_hybrid,hybrid_wrong_anatomy_right,anatomy_wrong_hybrid_right
+0,4.RB,0,1,0.5486987685041457,0,1,0.9488190247251107,0,1,0.7487588966146281,0,0,0,0
