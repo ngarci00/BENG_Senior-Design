@@ -66,6 +66,7 @@ def build_figure(image, resolutions):
 
     return figure
 
+#Creating a main function helps us organize the code and allows for better flow control.
 def main() -> None:
     image = load_image(IMAGE_PATH)
     figure = build_figure(image, RESOLUTIONS)
