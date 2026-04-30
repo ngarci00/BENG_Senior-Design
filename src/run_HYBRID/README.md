@@ -1,4 +1,4 @@
-# `run_HYBRID`  ⸜(｡˃ ᵕ ˂ )⸝♡ 
+# `2D CNN + SVM Model`  ⸜(｡˃ ᵕ ˂ )⸝♡ 
 
 This is the active video-classification pipeline in the repository!
 
