@@ -28,20 +28,8 @@ except ImportError:
         write_csv,
     )
 
-
-def _model_count(path: Path) -> int:
-    return len(list(path.glob("svm_fold_*.joblib"))) if path.exists() else 0
-
-
 def _default_model_dir() -> Path:
-    preferred = REPO_ROOT / hybrid_config.models_dir
-    legacy = REPO_ROOT / "runs" / "run_SVM" / "models"
-    expected = int(hybrid_config.kfolds)
-    if _model_count(preferred) >= expected:
-        return preferred
-    if _model_count(legacy) >= expected:
-        return legacy
-    return preferred
+    return REPO_ROOT / hybrid_config.models_dir
 
 
 #Parsing arguments and running the main function.
