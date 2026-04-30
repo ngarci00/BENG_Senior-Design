@@ -89,7 +89,7 @@ Use the repo-local tools rather than the old external helpers.
 1. Normalize rectangle JSON files:
 
 ```bash
-python3 normrectangles.py "input_folder"
+python3 scripts/normrectangles.py "input_folder"
 ```
 
 2. Export LabelMe visualizations:
