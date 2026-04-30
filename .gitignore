@@ -15,8 +15,9 @@ data/videos/raw_videos/
 data/videos/rectangle_label_videos/**/frames/
 **/*.avi
 **/*.mp4
-outputs/anatomy_tracking_format/detections.csv
-outputs/anatomy_tracks/tracks.csv 
+archive/outputs/
+archive/outputs/anatomy_tracking_format/detections.csv
+archive/outputs/anatomy_tracks/tracks.csv 
 
 #Training artifacts
 runs/run_*/fold_*

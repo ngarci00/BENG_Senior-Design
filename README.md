@@ -5,6 +5,14 @@
 
 Insert here!
 
+## Archived Anatomy Pipeline (NOT in USE)
+
+The anatomy-tracking and Mask R-CNN workflow has been moved under `archive/` so the active repo stays focused on the current SVM deployment path.
+
+- Overview: `archive/README.md`
+- Tracking/classifier docs: `archive/docs/anatomy_tracking_pipeline.md`
+- Detector/ensemble docs: `archive/docs/anatomy_maskrcnn_detector.md`
+
 ## Third-Party Tools
 
 This project uses [LabelMe](https://github.com/wkentaro/labelme) for image and
