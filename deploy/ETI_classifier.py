@@ -87,19 +87,14 @@ def main() -> None:
     device = choose_device(args.device)
     resize_hw: tuple[int, int] = tuple(int(v) for v in svm_config.resize_hw)  # type: ignore
 
-    # Dev print statements - uncomment if needed for debugging
-    # print(f"\nUsing device: {device}")
-    # print(f"Using resize: {resize_hw[0]}x{resize_hw[1]}")
-
     video_paths = collect_video_paths(args.inputs)
     models = load_models(args.model_dir, args.model_path)
-    # print(f"Loaded {len(models)} SVM model(s)")
 
     embedder = build_embedder(device)
     results = []
 
     for idx, video_path in enumerate(video_paths, start=1):
-        print(f"[{idx}/{len(video_paths)}] Predicting {video_path}")
+        print(f"\n[{idx}/{len(video_paths)}] Predicting {video_path}")
         row = predict_video(
             video_path,
             embedder=embedder,
@@ -112,15 +107,16 @@ def main() -> None:
         )
         results.append(row)
 
-        confidence_obj = row.get("label_confidence", 0.0)
-        confidence = (
-            float(confidence_obj)
-            if isinstance(confidence_obj, (int, float, str))
+        label_confidence = row.get("label_confidence", 0.0)
+        confidence_value = (
+            float(label_confidence)
+            if isinstance(label_confidence, (int, float, str))
             else 0.0
         )
+
         print(
-            f"Model is {confidence * 100:.2f}% confident that video [{row['video_name']}] "
-            f"is a {row['predicted_label']}, please check .csv file for further statistics!"
+            f"Model is {confidence_value * 100:.2f}% confident that video [{row['video_name']}] "
+            f"is a {row['predicted_label']}, please check predictions.csv file for further information!"
         )
 
     output_csv = (

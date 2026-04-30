@@ -1,2 +1,2 @@
-video_name,predicted_label,pass_prob,fail_prob,label_confidence,threshold,n_models,n_total_frames,n_sampled_frames,sampled_frame_indices,device,resize_hw,per_model_pass_probs
-24.RB.avi,FAIL,0.17537376640284277,0.8246262335971573,0.8246262335971573,0.5,4,913,16,0;61;122;182;243;304;365;426;486;547;608;669;730;790;851;912,cpu,224x224,"{""svm_fold_0.joblib"": 0.11983859814024352, ""svm_fold_1.joblib"": 0.314228879411564, ""svm_fold_2.joblib"": 0.20986463792410476, ""svm_fold_3.joblib"": 0.057562950135458806}"
+video_name,predicted_label,label_confidence,pass_prob,fail_prob,threshold,n_total_frames
+24.RB.avi,FAIL,0.82,17.54,82.46,0.8,913

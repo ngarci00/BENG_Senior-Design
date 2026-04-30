@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
-import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -64,17 +64,16 @@ def collect_video_paths(inputs: Sequence[str]) -> List[Path]:
         if not path.exists():
             raise FileNotFoundError(f"Input path does not exist: {path}")
 
-        candidates: Iterable[Path]
         if path.is_file():
-            candidates = [path]
+            if path.suffix.lower() not in SUPPORTED_VIDEO_EXTS:
+                raise RuntimeError(f"Unsupported video file: {path}")
+            candidates: Iterable[Path] = [path]
         else:
             candidates = sorted(
                 p for p in path.rglob("*") if p.is_file() and p.suffix.lower() in SUPPORTED_VIDEO_EXTS
             )
 
         for candidate in candidates:
-            if candidate.suffix.lower() not in SUPPORTED_VIDEO_EXTS:
-                continue
             if candidate not in seen:
                 seen.add(candidate)
                 video_paths.append(candidate)
@@ -112,13 +111,7 @@ def load_models(model_dir: str, explicit_model_paths: Sequence[str]) -> List[tup
 
 
 def build_embedder(device: str) -> ResNet18Embedder:
-    try:
-        embedder = ResNet18Embedder(pretrained=bool(svm_config.use_pretrained_backbone)).to(device)
-    except Exception as exc:
-        raise RuntimeError(
-            "Failed to initialize the ResNet-18 feature extractor. "
-            "Make sure the torchvision ResNet-18 ImageNet weights are available locally."
-        ) from exc
+    embedder = ResNet18Embedder(pretrained=bool(svm_config.use_pretrained_backbone)).to(device)
     embedder.eval()
     return embedder
 
@@ -143,14 +136,45 @@ def frame_to_tensor(frame: np.ndarray) -> torch.Tensor:
     return torch.from_numpy(np.ascontiguousarray(arr)).permute(2, 0, 1).float() / 255.0
 
 
+def resolve_frame_count(reader: imageio.core.format.Reader) -> int:
+    try:
+        n_frames = int(reader.count_frames())
+        if n_frames > 0:
+            return n_frames
+    except Exception:
+        pass
+
+    meta = reader.get_meta_data()
+
+    nframes_meta = meta.get("nframes")
+    if isinstance(nframes_meta, (int, float)) and math.isfinite(float(nframes_meta)) and int(nframes_meta) > 0:
+        return int(nframes_meta)
+
+    fps = meta.get("fps")
+    duration = meta.get("duration")
+    if (
+        isinstance(fps, (int, float))
+        and isinstance(duration, (int, float))
+        and math.isfinite(float(fps))
+        and math.isfinite(float(duration))
+        and float(fps) > 0.0
+        and float(duration) > 0.0
+    ):
+        estimated = int(round(float(fps) * float(duration)))
+        if estimated > 0:
+            return estimated
+
+    raise RuntimeError("Could not determine a valid frame count for this video.")
+
+
 def sample_video_frames(
     video_path: Path,
     frames_per_video: int,
     resize_hw: tuple[int, int],
 ) -> tuple[torch.Tensor, int, List[int]]:
-    reader = imageio.get_reader(str(video_path))
+    reader = imageio.get_reader(str(video_path), format="ffmpeg")
     try:
-        n_frames = len(reader)
+        n_frames = resolve_frame_count(reader)
         sampled_indices = uniform_sample_indices(n_frames, frames_per_video)
         frames = [frame_to_tensor(reader.get_data(index)) for index in sampled_indices]
     finally:
@@ -178,20 +202,8 @@ def build_video_embedding(
     return frame_embeddings.mean(dim=0, keepdim=True).numpy()
 
 
-def sigmoid(x: np.ndarray) -> np.ndarray:
-    return 1.0 / (1.0 + np.exp(-x))
-
-
 def model_probability(model: LoadedModel, embedding: np.ndarray) -> float:
-    if hasattr(model, "predict_proba"):
-        try:
-            return float(model.predict_proba(embedding)[0, 1])
-        except Exception:
-            pass
-    if hasattr(model, "decision_function"):
-        scores = np.asarray(model.decision_function(embedding), dtype=float).reshape(-1)
-        return float(sigmoid(scores)[0])
-    raise RuntimeError("Model does not support predict_proba or decision_function.")
+    return float(model.predict_proba(embedding)[0, 1])
 
 
 def predict_video(
@@ -228,21 +240,13 @@ def predict_video(
     label_confidence = pass_prob if predicted_label_int == 1 else fail_prob
 
     return {
-        # "video_path": str(video_path),
         "video_name": video_path.name,
         "predicted_label": predicted_label_name,
-        # "predicted_label_int": predicted_label_int,
-        "pass_prob": np.round(pass_prob*100,2), #Convert to percentage
-        "fail_prob": np.round(fail_prob*100,2), #Convert to percentage
-        "label_confidence": label_confidence,
-        "threshold": threshold, #The threshold used to determine PASS vs FAIL
-        # "n_models": len(models), #Number of SVM folds used in the ensemble
+        "label_confidence": np.round(label_confidence, 2),
+        "pass_prob": np.round(pass_prob * 100, 2),
+        "fail_prob": np.round(fail_prob * 100, 2),
+        "threshold": threshold,
         "n_total_frames": n_total_frames,
-        # "n_sampled_frames": len(sampled_indices),
-        # "sampled_frame_indices": ";".join(str(i) for i in sampled_indices),
-        # "device": device,
-        # "resize_hw": f"{resize_hw[0]}x{resize_hw[1]}",
-        # "per_model_pass_probs": json.dumps(per_model_pass_probs, sort_keys=True),
     }
 
 
