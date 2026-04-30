@@ -1,0 +1,8 @@
+{
+  "fold": 3,
+  "best_params": {
+    "svm__C": 0.1
+  },
+  "best_score_balacc_cv": 0.8730158730158731,
+  "kernel": "linear"
+}

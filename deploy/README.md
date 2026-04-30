@@ -1,6 +1,6 @@
 # Deploy
 
-How to locally run our 2D CNN + SVM model
+How to locally run our hybrid ResNet-18 + SVM model
 
 ## Run One Video
 ```bash
@@ -20,9 +20,9 @@ How to locally run our 2D CNN + SVM model
 
 The script will:
 
-- Load `runs/run_SVM/models/svm_fold_*.joblib`
+- Load `runs/run_HYBRID/models/svm_fold_*.joblib`
 - Sample frames uniformly from each video
-- Resize frames to the current SVM config resolution
+- Resize frames to the current hybrid config resolution
 - Build ResNet-18 video embeddings by mean-pooling frame embeddings
 - Average the fold-model probabilities into one final PASS/FAIL score
 - Always write a CSV file of the results
@@ -33,5 +33,5 @@ The script will:
 - The current script supports `.avi` and `.mp4`.
 - If `--output-csv` is omitted, results are written to `deploy/results/predictions.csv`.
 - The `deploy/results/` directory is created automatically.
-- It uses the existing ImageNet-pretrained ResNet-18 feature extractor path from `src/run_SVM`.
+- It uses the existing ImageNet-pretrained ResNet-18 feature extractor path from `src/run_HYBRID`.
 - The torchvision ResNet-18 weights need to be available locally on the machine.

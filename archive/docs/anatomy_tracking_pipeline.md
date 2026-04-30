@@ -112,7 +112,7 @@ Late fusion with the current ResNet-18 + SVM hybrid reports:
 
 ```bash
 python3 archive/scripts/ensemble_predictions.py \
-  --hybrid-reports-dir runs/run_SVM/res_eval/reports_50Poly_224x224 \
+  --hybrid-reports-dir runs/run_HYBRID/reports \
   --anatomy-reports-dir archive/outputs/anatomy_classifier_results/reports \
   --output-dir archive/outputs/ensemble_results \
   --hybrid-weight 0.5
@@ -122,7 +122,7 @@ Compare models:
 
 ```bash
 python3 archive/scripts/compare_models.py \
-  --hybrid-results runs/run_SVM/res_eval/reports_50Poly_224x224/all_folds_results.csv \
+  --hybrid-results runs/run_HYBRID/reports/all_folds_results.csv \
   --anatomy-results archive/outputs/anatomy_classifier_results/reports/all_folds_results.csv \
   --ensemble-results archive/outputs/ensemble_results/all_folds_results.csv \
   --output-dir archive/outputs/model_comparison
@@ -143,7 +143,7 @@ Outputs:
 - The main feedback file is `archive/outputs/anatomy_features/anatomy_feedback.csv`.
 - The label normalizer currently maps variants such as `vocal_chords` to `vocal_cords`.
 - The same `splits_poly_50.json` fold structure is used by default for anatomy classifier evaluation and fusion.
-- The default hybrid comparison target is `runs/run_SVM/res_eval/reports_50Poly_224x224`.
+- The default hybrid comparison target is `runs/run_HYBRID/reports`.
 
 ## Models Used
 

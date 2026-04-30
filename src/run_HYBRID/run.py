@@ -1,17 +1,17 @@
 import os
 import sys
 import time
-#Ensure `<repo_root>/src` is on sys.path so we can import run_2DCNN, run_3DCNN, etc.
+#Ensure `<repo_root>/src` is on sys.path so we can import run_HYBRID reliably.
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC_DIR = os.path.join(_REPO_ROOT, "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 import torch
-from run_SVM.extract_features import extract_fold
-from run_SVM.train_svm import train_fold
-from run_SVM.eval import evaluate_folds
-from run_SVM.biomarker_eval import run_biomarker_eval
-from run_SVM import config
+from run_HYBRID.extract_features import extract_fold
+from run_HYBRID.train_svm import train_fold
+from run_HYBRID.eval import evaluate_folds
+from run_HYBRID.biomarker_eval import run_biomarker_eval
+from run_HYBRID import config
 
 
 def _format_seconds(seconds: float) -> str:
@@ -29,11 +29,11 @@ def time_training(fold: int) -> float:
     start = time.perf_counter()
     train_fold(fold)
     elapsed = time.perf_counter() - start
-    print(f"Fold {fold}: SVM training completed in {_format_seconds(elapsed)}")
+    print(f"Fold {fold}: hybrid training completed in {_format_seconds(elapsed)}")
     return elapsed
 
 
-#Main script to run the entire SVM pipeline
+#Main script to run the entire hybrid pipeline
 def main():
     pipeline_start = time.perf_counter()
 
@@ -53,9 +53,9 @@ def main():
     run_biomarker_eval()
 
     total_train_time = sum(train_times)
-    print(f"Total SVM training time: {_format_seconds(total_train_time)}")
+    print(f"Total hybrid training time: {_format_seconds(total_train_time)}")
     pipeline_elapsed = time.perf_counter() - pipeline_start
-    print(f"Total SVM pipeline runtime: {_format_seconds(pipeline_elapsed)}")
+    print(f"Total hybrid pipeline runtime: {_format_seconds(pipeline_elapsed)}")
 
 
 if __name__ == "__main__":

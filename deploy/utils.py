@@ -20,8 +20,8 @@ SRC_DIR = REPO_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from run_SVM import config as svm_config
-from run_SVM.feature_extractor import ResNet18Embedder
+from run_HYBRID import config as hybrid_config
+from run_HYBRID.feature_extractor import ResNet18Embedder
 
 
 SUPPORTED_VIDEO_EXTS = {".avi", ".mp4"}
@@ -111,7 +111,7 @@ def load_models(model_dir: str, explicit_model_paths: Sequence[str]) -> List[tup
 
 
 def build_embedder(device: str) -> ResNet18Embedder:
-    embedder = ResNet18Embedder(pretrained=bool(svm_config.use_pretrained_backbone)).to(device)
+    embedder = ResNet18Embedder(pretrained=bool(hybrid_config.use_pretrained_backbone)).to(device)
     embedder.eval()
     return embedder
 

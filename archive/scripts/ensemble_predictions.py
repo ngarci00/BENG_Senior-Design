@@ -4,7 +4,7 @@ import os
 from typing import Dict, List, Tuple
 import numpy as np
 
-from _paths import add_archive_src_to_path, project_path
+from _paths import add_archive_src_to_path, default_hybrid_reports_dir
 
 add_archive_src_to_path()
 
@@ -17,7 +17,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--hybrid-reports-dir",
-        default=project_path("runs", "run_SVM", "res_eval", "reports_50Poly_224x224"),
+        default=default_hybrid_reports_dir(),
         help="Directory containing 50-video hybrid fold_*_results.csv files",
     )
     parser.add_argument(

@@ -1,12 +1,12 @@
 import os, json, csv, argparse, sys
 from typing import Dict, List, Optional
 import numpy as np
-# Ensure `<repo_root>/src` is on sys.path so we can import run_SVM config reliably
+# Ensure `<repo_root>/src` is on sys.path so we can import run_HYBRID config reliably
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC_DIR = os.path.join(_REPO_ROOT, "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
-from run_SVM import config
+from run_HYBRID import config
 
 
 #Biomarkers of interest and their label synonyms in case we misspelled them during annotation.

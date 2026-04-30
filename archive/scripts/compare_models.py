@@ -5,7 +5,7 @@ import os
 from typing import Dict, List
 import numpy as np
 
-from _paths import add_archive_src_to_path, project_path
+from _paths import add_archive_src_to_path, default_hybrid_results_csv
 
 add_archive_src_to_path()
 
@@ -18,7 +18,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--hybrid-results",
-        default=project_path("runs", "run_SVM", "res_eval", "reports_50Poly_224x224", "all_folds_results.csv"),
+        default=default_hybrid_results_csv(),
     )
     parser.add_argument(
         "--anatomy-results",

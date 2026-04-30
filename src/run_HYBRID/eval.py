@@ -23,13 +23,13 @@ from sklearn.metrics import (
     precision_recall_curve,
     auc,
 )
-# Ensure `<repo_root>/src` is on sys.path so we can import run_SVM/config reliably
+# Ensure `<repo_root>/src` is on sys.path so we can import run_HYBRID/config reliably
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC_DIR = os.path.join(_REPO_ROOT, "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-from run_SVM import config  
+from run_HYBRID import config  
 
 def _ensure_dir(path: str) -> None:
     os.makedirs(path, exist_ok=True)

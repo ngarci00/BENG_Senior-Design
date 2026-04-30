@@ -5,7 +5,7 @@ import os
 import sys
 from typing import Dict, List, Sequence
 
-from _paths import PROJECT_ROOT, add_archive_src_to_path, archive_path, project_path
+from _paths import PROJECT_ROOT, add_archive_src_to_path, archive_path, default_hybrid_reports_dir, project_path
 
 add_archive_src_to_path()
 
@@ -34,7 +34,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--skip-hybrid", action="store_true", help="Use existing hybrid reports instead of training SVM")
     parser.add_argument(
         "--hybrid-reports-dir",
-        default=repo_path("runs", "run_SVM", "reports"),
+        default=default_hybrid_reports_dir(),
         help="Hybrid SVM report directory used for late fusion",
     )
     parser.add_argument("--hybrid-weight", type=float, default=0.5)
@@ -217,7 +217,7 @@ def main() -> None:
     if not args.skip_hybrid:
         run_step(
             "Train/evaluate hybrid SVM branch",
-            [args.python, project_path("src", "run_SVM", "run.py")],
+            [args.python, project_path("src", "run_HYBRID", "run.py")],
             args.dry_run,
         )
 

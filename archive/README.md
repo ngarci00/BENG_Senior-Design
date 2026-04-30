@@ -7,4 +7,4 @@ This directory contains the archived anatomy-tracking and anatomy-detector pipel
 - Archived docs: `archive/docs/anatomy_tracking_pipeline.md`, `archive/docs/anatomy_maskrcnn_detector.md`
 - Archived outputs: `archive/outputs/`
 
-The archived pipeline still reads shared project data from `data/videos/json_utils/` and can still compare against the active SVM reports in `runs/run_SVM/`.
+The archived pipeline still reads shared project data from `data/videos/json_utils/` and can still compare against the active hybrid reports in `runs/run_HYBRID/`.

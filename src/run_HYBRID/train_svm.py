@@ -4,7 +4,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
-from run_SVM import config
+from run_HYBRID import config
 
 def train_fold(fold:int) -> None:
     output_path = os.path.join(config.features_dir, f"fold_{fold}.npz") #Path to the extracted features for this fold

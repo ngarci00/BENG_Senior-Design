@@ -5,7 +5,7 @@ import subprocess
 import sys
 from typing import List, Optional, Sequence
 
-from _paths import PROJECT_ROOT, archive_path, project_path
+from _paths import PROJECT_ROOT, archive_path, default_hybrid_reports_dir, project_path
 
 SCRIPTS_DIR = archive_path("scripts")
 
@@ -20,7 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--splits", default=repo_path("data", "videos", "json_utils", "splits_poly_50.json"))
     parser.add_argument(
         "--hybrid-reports-dir",
-        default=repo_path("runs", "run_SVM", "res_eval", "reports_50Poly_224x224"),
+        default=default_hybrid_reports_dir(),
         help="Existing 50-video hybrid SVM report directory",
     )
     parser.add_argument("--output-root", default=archive_path("outputs"))

@@ -1,11 +1,11 @@
-#Config file for SVM model, contains all the parameters and paths needed for feature extraction and SVM training. 
+#Config file for the active hybrid model, covering feature extraction and SVM training.
 import os
 
 #data paths:
 data_dir = os.path.join("data", "videos") #Base directory for video data
 json_dir = os.path.join(data_dir, "json_utils") #Directory for dataset index and split JSON files
-run_name = "run_SVM"
-runs_dir = os.path.join("runs", run_name) #Directory to save SVM training runs, where run_name can be something like "svm_run_1"
+run_name = "run_HYBRID"
+runs_dir = os.path.join("runs", run_name) #Directory for active hybrid training runs.
 features_dir = os.path.join(runs_dir, "svm_features") #Directory to save extracted features for
 models_dir = os.path.join(runs_dir, "models") #Directory to save trained SVM models for each fold
 reports_dir = os.path.join(runs_dir, "reports") #Directory to save training reports and metrics for each fold

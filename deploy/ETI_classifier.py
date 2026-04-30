@@ -8,9 +8,9 @@ try:
         build_embedder,
         choose_device,
         collect_video_paths,
+        hybrid_config,
         load_models,
         predict_video,
-        svm_config,
         validate_args,
         write_csv,
     )
@@ -21,12 +21,28 @@ except ImportError:
         build_embedder,
         choose_device,
         collect_video_paths,
+        hybrid_config,
         load_models,
         predict_video,
-        svm_config,
         validate_args,
         write_csv,
     )
+
+
+def _model_count(path: Path) -> int:
+    return len(list(path.glob("svm_fold_*.joblib"))) if path.exists() else 0
+
+
+def _default_model_dir() -> Path:
+    preferred = REPO_ROOT / hybrid_config.models_dir
+    legacy = REPO_ROOT / "runs" / "run_SVM" / "models"
+    expected = int(hybrid_config.kfolds)
+    if _model_count(preferred) >= expected:
+        return preferred
+    if _model_count(legacy) >= expected:
+        return legacy
+    return preferred
+
 
 #Parsing arguments and running the main function.
 def parse_args() -> argparse.Namespace:
@@ -40,7 +56,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--model-dir",
-        default=str(REPO_ROOT / svm_config.models_dir),
+        default=str(_default_model_dir()),
         help="Directory containing svm_fold_*.joblib files.",
     )
     parser.add_argument(
@@ -52,7 +68,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--frames-per-video",
         type=int,
-        default=int(svm_config.frames_per_video_validation),
+        default=int(hybrid_config.frames_per_video_validation),
         help="Number of uniformly sampled frames per video.",
     )
     parser.add_argument(
@@ -85,7 +101,7 @@ def main() -> None:
     validate_args(args)
 
     device = choose_device(args.device)
-    resize_hw: tuple[int, int] = tuple(int(v) for v in svm_config.resize_hw)  # type: ignore
+    resize_hw: tuple[int, int] = tuple(int(v) for v in hybrid_config.resize_hw)  # type: ignore
 
     video_paths = collect_video_paths(args.inputs)
     models = load_models(args.model_dir, args.model_path)

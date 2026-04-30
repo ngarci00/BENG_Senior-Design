@@ -1,15 +1,15 @@
 import os, sys, json, numpy as np, torch
 from torch.utils.data import DataLoader
 
-#Ensure `<repo_root>/src` is on sys.path so we can import run_2DCNN, run_SVM, etc.
+#Ensure `<repo_root>/src` is on sys.path so we can import run_HYBRID reliably.
 _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SRC_DIR = os.path.join(_REPO_ROOT, "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
-import run_2DCNN.dataset as run2d_dataset
-from run_SVM.feature_extractor import ResNet18Embedder
-from run_SVM import config
+import run_HYBRID.dataset as hybrid_dataset
+from run_HYBRID.feature_extractor import ResNet18Embedder
+from run_HYBRID import config
 
 #Ensuring output directory exists
 def ensure_dir(path: str):
@@ -43,9 +43,7 @@ def _video_to_embedding(embedder: ResNet18Embedder, x: torch.Tensor) -> torch.Te
     return z_video
 
 def extract_fold(fold:int, device:str) -> None:
-    # Ensure the 2D dataset uses the same target resize as this SVM run config.
-    run2d_dataset.resize_hw = config.resize_hw
-    VideoFrameDataset = run2d_dataset.VideoFrameDataset
+    VideoFrameDataset = hybrid_dataset.VideoFrameDataset
 
     ensure_dir(config.features_dir) #Ensure the output directory exists
 

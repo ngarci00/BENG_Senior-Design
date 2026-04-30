@@ -117,7 +117,7 @@ hybrid SVM branch evaluated as one ensemble pipeline:
 
 This runs:
 
-- hybrid SVM training/evaluation through `src/run_SVM/run.py`
+- hybrid SVM training/evaluation through `src/run_HYBRID/run.py`
 - fold-specific Mask R-CNN detector training
 - detector prediction on each fold's train and validation videos
 - existing deterministic anatomy tracking on predicted detections
@@ -132,7 +132,7 @@ ensemble branch:
 ```bash
 .venv/bin/python archive/scripts/run_detector_hybrid_ensemble.py \
   --skip-hybrid \
-  --hybrid-reports-dir runs/run_SVM/reports \
+  --hybrid-reports-dir runs/run_HYBRID/reports \
   --folds 0 1 2 3 \
   --detector-epochs 10 \
   --detector-batch-size 2 \

@@ -22,6 +22,5 @@ archive/outputs/anatomy_tracks/tracks.csv
 #Training artifacts
 runs/run_*/fold_*
 runs/run_*/*.json
-src/run_2DCNN/
 runs/run_2DCNN/
 figs/
