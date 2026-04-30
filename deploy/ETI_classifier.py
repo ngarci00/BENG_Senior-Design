@@ -73,7 +73,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--threshold",
         type=float,
-        default=0.8, #if threshold < 0.8 the model will predict FAIL, otherwise PASS
+        default=0.5, #Common default threshold, meaning if the ensembled probability is above 0.5, we predict the positive class (e.g., "PASS"), otherwise the negative class (e.g., "FAIL").
         help="PASS threshold applied to the ensembled probability.",
     )
     parser.add_argument(

@@ -1,2 +1,2 @@
 video_name,predicted_label,label_confidence,pass_prob,fail_prob,threshold,n_total_frames
-24.RB.avi,FAIL,0.82,17.54,82.46,0.8,913
+24.RB.avi,FAIL,0.71,29.03,70.97,0.5,913
