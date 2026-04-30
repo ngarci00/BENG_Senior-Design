@@ -4,6 +4,7 @@ venv/
 .vscode/
 __pycache__/
 .cache/
+.cache
 
 #OS junk
 .DS_Store
