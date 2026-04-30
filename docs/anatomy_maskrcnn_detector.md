@@ -50,7 +50,7 @@ Main outputs:
 - `outputs/anatomy_detector/fold_0/training_config.json`
 
 The default training split is video-level `fold_0/train` from
-`data/videos/splits_poly_50.json`. Validation uses `fold_0/val`.
+`data/videos/json_utils/splits_poly_50.json`. Validation uses `fold_0/val`.
 
 ## Predict Detections
 
@@ -60,7 +60,7 @@ Run detector inference and export predictions in the same schema consumed by
 ```bash
 .venv/bin/python scripts/predict_anatomy_maskrcnn.py \
   --checkpoint outputs/anatomy_detector/fold_0/maskrcnn_best.pt \
-  --splits data/videos/splits_poly_50.json \
+  --splits data/videos/json_utils/splits_poly_50.json \
   --fold 0 \
   --split val \
   --frame-source all \
@@ -87,7 +87,7 @@ Then extract anatomy features from the predicted tracks:
 ```bash
 .venv/bin/python scripts/extract_anatomy_features.py \
   --tracks-csv outputs/anatomy_detector/predictions/fold_0_val_tracks/tracks.csv \
-  --index data/videos/index_poly.json \
+  --index data/videos/json_utils/index_poly.json \
   --output-dir outputs/anatomy_detector/predictions/fold_0_val_features
 ```
 

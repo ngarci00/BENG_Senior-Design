@@ -35,7 +35,7 @@ Audit LabelMe coverage and label consistency:
 
 ```bash
 python3 scripts/audit_tracking_labels.py \
-  --index data/videos/index_poly.json \
+  --index data/videos/json_utils/index_poly.json \
   --output-dir outputs/anatomy_label_audit
 ```
 
@@ -43,7 +43,7 @@ Convert LabelMe polygon or rectangle annotations into compact tracker inputs:
 
 ```bash
 python3 scripts/convert_labelme_to_tracking_format.py \
-  --index data/videos/index_poly.json \
+  --index data/videos/json_utils/index_poly.json \
   --output-dir outputs/anatomy_tracking_format
 ```
 
@@ -79,7 +79,7 @@ Extract video-level features:
 ```bash
 python3 scripts/extract_anatomy_features.py \
   --tracks-csv outputs/anatomy_tracks/tracks.csv \
-  --index data/videos/index_poly.json \
+  --index data/videos/json_utils/index_poly.json \
   --output-dir outputs/anatomy_features
 ```
 
@@ -88,12 +88,12 @@ Train and evaluate the anatomy-only classifier on existing folds:
 ```bash
 python3 scripts/train_anatomy_classifier.py \
   --features-csv outputs/anatomy_features/anatomy_features.csv \
-  --splits data/videos/splits_poly_50.json \
+  --splits data/videos/json_utils/splits_poly_50.json \
   --output-dir outputs/anatomy_classifier_results/models
 
 python3 scripts/eval_anatomy_classifier.py \
   --features-csv outputs/anatomy_features/anatomy_features.csv \
-  --splits data/videos/splits_poly_50.json \
+  --splits data/videos/json_utils/splits_poly_50.json \
   --models-dir outputs/anatomy_classifier_results/models \
   --reports-dir outputs/anatomy_classifier_results/reports
 ```

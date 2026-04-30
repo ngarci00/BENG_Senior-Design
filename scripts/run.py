@@ -14,8 +14,8 @@ def repo_path(*parts: str) -> str:
 #function to parse command line arguments for the main pipeline.
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--index", default=repo_path("data", "videos", "index_poly.json"))
-    parser.add_argument("--splits", default=repo_path("data", "videos", "splits_poly_50.json"))
+    parser.add_argument("--index", default=repo_path("data", "videos", "json_utils", "index_poly.json"))
+    parser.add_argument("--splits", default=repo_path("data", "videos", "json_utils", "splits_poly_50.json"))
     parser.add_argument(
         "--hybrid-reports-dir",
         default=repo_path("runs", "run_SVM", "res_eval", "reports_50Poly_224x224"),

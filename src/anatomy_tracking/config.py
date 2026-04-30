@@ -2,10 +2,11 @@ import os
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 DATA_DIR = os.path.join(REPO_ROOT, "data", "videos")
+JSON_DIR = os.path.join(DATA_DIR, "json_utils")
 
-DEFAULT_INDEX_JSON = os.path.join(DATA_DIR, "index_poly.json")
+DEFAULT_INDEX_JSON = os.path.join(JSON_DIR, "index_poly.json")
 # Main evaluation setting: use all 50 polygon-labeled videos for anatomy and fusion.
-DEFAULT_SPLITS_JSON = os.path.join(DATA_DIR, "splits_poly_50.json")
+DEFAULT_SPLITS_JSON = os.path.join(JSON_DIR, "splits_poly_50.json")
 
 DEFAULT_OUTPUT_DIR = os.path.join(REPO_ROOT, "outputs")
 TRACKING_FORMAT_DIR = os.path.join(DEFAULT_OUTPUT_DIR, "anatomy_tracking_format")
