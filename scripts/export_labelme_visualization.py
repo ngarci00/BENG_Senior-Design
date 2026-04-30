@@ -5,9 +5,7 @@ import io
 import json
 import os
 from typing import Dict, Iterable, List, Sequence, Tuple
-
 from PIL import Image, ImageColor, ImageDraw
-
 
 DEFAULT_COLORS = {
     "epiglottis": "#f97316",
@@ -16,7 +14,6 @@ DEFAULT_COLORS = {
     "arytenoids": "#22c55e",
     "esophagus": "#a855f7",
 }
-
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Render LabelMe JSON annotations into visualization frames.")
