@@ -60,6 +60,13 @@ Reference:
 
 - https://github.com/wkentaro/labelme/blob/main/examples/video_annotation/README.md
 
+LabelMe attribution:
+
+- LabelMe by Kentaro Wada and contributors
+- Source: `https://github.com/wkentaro/labelme`
+- DOI: `10.5281/zenodo.5711226`
+- License: `GPL-3`
+
 If the command does not work, activate the repo virtualenv first:
 
 ```bash
