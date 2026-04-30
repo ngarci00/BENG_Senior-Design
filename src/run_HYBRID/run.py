@@ -13,7 +13,7 @@ from run_HYBRID.eval import evaluate_folds
 from run_HYBRID.biomarker_eval import run_biomarker_eval
 from run_HYBRID import config
 
-
+#Helper function to format elapsed time in a readable way
 def _format_seconds(seconds: float) -> str:
     minutes, remaining_seconds = divmod(seconds, 60.0)
     hours, minutes = divmod(int(minutes), 60)
@@ -23,15 +23,13 @@ def _format_seconds(seconds: float) -> str:
         return f"{minutes}m {remaining_seconds:.2f}s"
     return f"{remaining_seconds:.2f}s"
 
-
+#Helper function to train one fold and measure elapsed time
 def time_training(fold: int) -> float:
-    """Train one fold and return elapsed training time in seconds."""
     start = time.perf_counter()
     train_fold(fold)
     elapsed = time.perf_counter() - start
     print(f"Fold {fold}: hybrid training completed in {_format_seconds(elapsed)}")
     return elapsed
-
 
 #Main script to run the entire hybrid pipeline
 def main():
@@ -56,7 +54,6 @@ def main():
     print(f"Total hybrid training time: {_format_seconds(total_train_time)}")
     pipeline_elapsed = time.perf_counter() - pipeline_start
     print(f"Total hybrid pipeline runtime: {_format_seconds(pipeline_elapsed)}")
-
 
 if __name__ == "__main__":
     main()
