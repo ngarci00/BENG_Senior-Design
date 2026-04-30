@@ -25,10 +25,10 @@ resize_hw = (224,224) #ImageNet backbones typically use 224x224, we can also try
 #Need to test (64x64, 128x128, 224x224, 320x320, 600x600) for the best balance of speed and performance
 use_only_annotated_frames = True #Whether to use only annotated frames for train/val, should match the setting used during feature extraction
 
-frames_per_video_train = 16 #Number of frames to sample from each video for training, should match the setting used during feature extraction
-frames_per_video_validation = 16 #Number of frames to sample from each video for validation, should match the setting used during feature extraction
+frames_per_video_train = 64 #Number of frames to sample from each video for training, should match the setting used during feature extraction
+frames_per_video_validation = 64 #Number of frames to sample from each video for validation, should match the setting used during feature extraction
 
-sample_mode_train = "random" #Sampling mode for training frames
+sample_mode_train = "uniform" #Sampling mode for training frames
 sample_mode_validation = "uniform" #Sampling mode for validation frames
 
 #Feature extraction parameters:
