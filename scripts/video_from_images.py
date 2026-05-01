@@ -8,7 +8,7 @@ import imageio.v2 as imageio
 import numpy as np
 from PIL import Image
 
-
+#Parser function to handle command line arguments
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Create a video from an image glob without relying on video_cli.")
     parser.add_argument("out_file", help="Output video or gif file")
@@ -17,16 +17,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--nframes", type=int, default=None)
     return parser.parse_args()
 
-
+#Natural sorting key function to sort files in a human-friendly way
 def natural_key(path: str) -> List[object]:
     parts = re.split(r"(\d+)", path)
     return [int(part) if part.isdigit() else part.lower() for part in parts]
 
-
+#Ensure that a value is even by rounding up if necessary
 def even(value: int) -> int:
     return int(math.ceil(value / 2.0) * 2)
 
-
+#Gather files matching the input glob pattern and limit to nframes if specified
 def gather_files(pattern: str, nframes: int | None) -> List[str]:
     files = sorted(glob.glob(pattern), key=natural_key)
     if nframes is not None:
@@ -35,7 +35,7 @@ def gather_files(pattern: str, nframes: int | None) -> List[str]:
         raise ValueError(f"No files matched pattern: {pattern}")
     return files
 
-
+#Determine the target shape for the video by finding the maximum height and width among the input files and ensuring they are even
 def target_shape(files: Iterable[str]) -> tuple[int, int]:
     max_height = 0
     max_width = 0
@@ -46,7 +46,7 @@ def target_shape(files: Iterable[str]) -> tuple[int, int]:
         max_width = max(max_width, int(width))
     return even(max_height), even(max_width)
 
-
+#Ensure that the input frame is in RGB format, converting if necessary
 def ensure_rgb(frame: np.ndarray) -> np.ndarray:
     if frame.ndim == 2:
         return np.stack([frame, frame, frame], axis=-1)
@@ -54,7 +54,7 @@ def ensure_rgb(frame: np.ndarray) -> np.ndarray:
         return frame[:, :, :3]
     return frame
 
-
+#Center pad the input frame to the target height and width, ensuring the output is in RGB format
 def center_pad(frame: np.ndarray, target_height: int, target_width: int) -> np.ndarray:
     frame = ensure_rgb(frame)
     height, width = frame.shape[:2]
@@ -69,7 +69,7 @@ def center_pad(frame: np.ndarray, target_height: int, target_width: int) -> np.n
     output[y0 : y0 + height, x0 : x0 + width] = frame
     return output
 
-
+#Main function to create a video from the input images, writing progress to the console
 def main() -> int:
     args = parse_args()
     files = gather_files(args.input_files, args.nframes)
