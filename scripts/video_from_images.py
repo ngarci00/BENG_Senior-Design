@@ -4,7 +4,6 @@ import math
 import os
 import re
 from typing import Iterable, List
-
 import imageio.v2 as imageio
 import numpy as np
 from PIL import Image

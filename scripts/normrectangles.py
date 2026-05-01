@@ -1,11 +1,10 @@
 # To be able to run " labelmetk json-to-visualization" we need to normalize the rectangles in the json files
 # labelme is sensitive to the order of the points in the rectangle, therefore giving us an error
 # this script should fix that and needs to be run before the json-to-visualization command - nico
-
 import json, glob, os, sys 
 
+#Main function to Norm rectangle points
 def normalize_rectangle_points(json_path: str) -> bool:
-    """ Provide the path to the json file to normalize the rectangle points """
     with open(json_path, "r") as f: #open the json file
         data = json.load(f)
     changed = False
@@ -48,7 +47,7 @@ def main(folder:str):
     print(f"Total JSON files processed: {total}")
     print(f"Files with fixed rectangles: {fixed}")
 
-# Command line execution
+#Command line execution
 if __name__ == "__main__": #only run when executed directly
     if len(sys.argv) !=2:
         print("Usage: python normrectangles.py <folder_with_json_files>")
