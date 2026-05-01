@@ -2,24 +2,23 @@ import os
 #Root directory of the repository
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CACHE_ROOT = os.path.join(REPO_ROOT, ".cache")
-import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 
 #Paths for the input image and output figure
 IMAGE_PATH = os.path.join(REPO_ROOT, "data", "videos", "raw_videos", "41.MG", "00000207.jpg")
-OUTPUT_PATH = os.path.join(REPO_ROOT, "outputs", "resolution_comparison.png")
-ORIGINAL_OUTPUT_PATH = os.path.join(REPO_ROOT, "outputs", "resolution_original.png")
+OUTPUT_PATH = os.path.join(REPO_ROOT, "data","videos","gifs", "resolution_comparison.png")
+ORIGINAL_OUTPUT_PATH = os.path.join(REPO_ROOT,"data","videos","gifs", "resolution_original.png")
 #List of resolutions to compare
 RESOLUTIONS = [32, 64, 128, 224, 320, 600]
 
-#ensure that the output directory exists
+#Ensure that the output directory exists
 def ensure_dir(path: str) -> None:
     directory = os.path.dirname(path)
     if directory:
         os.makedirs(directory, exist_ok=True)
 
-#load the image from the specified path
+#Load the image from the specified path
 def load_image(path: str) -> np.ndarray:
     if not os.path.exists(path):
         raise FileNotFoundError(f"Could not read image: {path}")
@@ -41,14 +40,14 @@ def build_original_figure(image: np.ndarray):
         spine.set_linewidth(1.2)
     return figure
 
-#resize the image to the specified side length while maintaining aspect ratio
+#Resize the image to the specified side length while maintaining aspect ratio
 def resize_image(image: np.ndarray, side: int) -> np.ndarray:
     src_h, src_w = image.shape[:2]
     y_idx = np.linspace(0, src_h - 1, side).astype(np.int32)
     x_idx = np.linspace(0, src_w - 1, side).astype(np.int32)
     return image[np.ix_(y_idx, x_idx)]
 
-#building a figure with subplots for each resolution just like the referenced paper:
+#Building a figure with subplots for each resolution just like the referenced paper:
 def build_figure(image, resolutions):
     nrows, ncols = 2, 3
     figure, axes = plt.subplots(nrows, ncols, figsize=(16, 10), constrained_layout=True)
