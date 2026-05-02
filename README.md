@@ -4,7 +4,7 @@
 ## Research Papers
 
 ### Image Resolution Effects on DL Models for Video-Assisted Intubation
-<a href="papers/resolution_research.docx.pdf" class="image fit"><img src="papers/resolution_research.docx.pdf" alt=""></a>
+![resolution_research.docx.pdf](https://github.com/ngarci00/BENG_Senior-Design/blob/main/papers/resolution_research.docx.pdf)
 
 ### Semester Long Project Research Paper
 
