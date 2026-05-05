@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import argparse
 import csv
 import math
@@ -7,23 +6,21 @@ import re
 import sys
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence
-
 import imageio
 import joblib
 import numpy as np
 import torch
 import torch.nn.functional as F
 
-
+#repo root and config paths
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_DIR = REPO_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
-
 from run_HYBRID import config as hybrid_config
 from run_HYBRID.feature_extractor import ResNet18Embedder
 
-
+#Supported video extensions, label mapping, and type aliases.
 SUPPORTED_VIDEO_EXTS = {".avi", ".mp4"}
 INT_TO_LABEL = {0: "FAIL", 1: "PASS"}
 DEFAULT_RESULTS_DIR = REPO_ROOT / "deploy" / "results"
@@ -31,7 +28,7 @@ DEFAULT_OUTPUT_CSV = DEFAULT_RESULTS_DIR / "predictions.csv"
 LoadedModel = Any
 PredictionRow = Dict[str, object]
 
-
+#Functions for device selection, argument validation, video path collection, model loading, embedding construction, etc.
 def choose_device(name: str | None) -> str:
     if name:
         device = str(name).strip().lower()
@@ -45,7 +42,7 @@ def choose_device(name: str | None) -> str:
         return "mps"
     return "cpu"
 
-
+#Argument parsing and main function
 def validate_args(args: argparse.Namespace) -> None:
     if args.frames_per_video < 1:
         raise ValueError("--frames-per-video must be at least 1.")
@@ -54,7 +51,7 @@ def validate_args(args: argparse.Namespace) -> None:
     if not 0.0 <= args.threshold <= 1.0:
         raise ValueError("--threshold must be between 0.0 and 1.0.")
 
-
+#Function to parse commmand-line arguments
 def collect_video_paths(inputs: Sequence[str]) -> List[Path]:
     video_paths: List[Path] = []
     seen: set[Path] = set()
@@ -84,14 +81,14 @@ def collect_video_paths(inputs: Sequence[str]) -> List[Path]:
     video_paths.sort()
     return video_paths
 
-
+#Function to sort model files by fold number, ensuring correct order of loading.
 def _model_sort_key(path: Path) -> tuple[int, str]:
     match = re.search(r"svm_fold_(\d+)\.joblib$", path.name)
     if match:
         return (int(match.group(1)), path.name)
     return (10**9, path.name)
 
-
+#Function to load SVM models from specified directory or explicit paths, with error handling for missing files.
 def load_models(model_dir: str, explicit_model_paths: Sequence[str]) -> List[tuple[Path, LoadedModel]]:
     if explicit_model_paths:
         model_paths = [Path(p).expanduser().resolve() for p in explicit_model_paths]
@@ -99,6 +96,7 @@ def load_models(model_dir: str, explicit_model_paths: Sequence[str]) -> List[tup
         root = Path(model_dir).expanduser().resolve()
         model_paths = sorted(root.glob("svm_fold_*.joblib"), key=_model_sort_key)
 
+    #Fallback if no path found:
     if not model_paths:
         raise RuntimeError("No SVM model files were found.")
 
@@ -109,13 +107,13 @@ def load_models(model_dir: str, explicit_model_paths: Sequence[str]) -> List[tup
 
     return [(path, joblib.load(path)) for path in model_paths]
 
-
+#Function to init the ResNet-18 embedder, with option for pretrained weights and device placement.
 def build_embedder(device: str) -> ResNet18Embedder:
     embedder = ResNet18Embedder(pretrained=bool(hybrid_config.use_pretrained_backbone)).to(device)
     embedder.eval()
     return embedder
 
-
+#Function to uniformly sample frame indices from a video:
 def uniform_sample_indices(n_frames: int, k: int) -> List[int]:
     if n_frames <= 0:
         raise RuntimeError("Video has no frames.")
@@ -123,7 +121,7 @@ def uniform_sample_indices(n_frames: int, k: int) -> List[int]:
         return [0]
     return [int(round(i * (n_frames - 1) / (k - 1))) for i in range(k)]
 
-
+#Function to convert a video frame aka numpy array into a normalized PyTorch tensor to use as input for the ResNet-18.
 def frame_to_tensor(frame: np.ndarray) -> torch.Tensor:
     arr = np.asarray(frame)
     if arr.ndim == 2:
@@ -135,7 +133,7 @@ def frame_to_tensor(frame: np.ndarray) -> torch.Tensor:
 
     return torch.from_numpy(np.ascontiguousarray(arr)).permute(2, 0, 1).float() / 255.0
 
-
+#Function to determine the # of frames in a video. We use Reader here since allows for better readability.
 def resolve_frame_count(reader: imageio.core.format.Reader) -> int:
     try:
         n_frames = int(reader.count_frames())
@@ -146,6 +144,7 @@ def resolve_frame_count(reader: imageio.core.format.Reader) -> int:
 
     meta = reader.get_meta_data()
 
+    ## of frames if available and valid, since it's the most direct source. If not, we can try to estimate based on fps and duration metadata.
     nframes_meta = meta.get("nframes")
     if isinstance(nframes_meta, (int, float)) and math.isfinite(float(nframes_meta)) and int(nframes_meta) > 0:
         return int(nframes_meta)
@@ -166,13 +165,13 @@ def resolve_frame_count(reader: imageio.core.format.Reader) -> int:
 
     raise RuntimeError("Could not determine a valid frame count for this video.")
 
-
+#Function to sample frames from a video, convert to tensors, and resize them for embedding extraction.
 def sample_video_frames(
     video_path: Path,
     frames_per_video: int,
     resize_hw: tuple[int, int],
 ) -> tuple[torch.Tensor, int, List[int]]:
-    reader = imageio.get_reader(str(video_path), format="ffmpeg")
+    reader = imageio.get_reader(str(video_path), format="ffmpeg") #ffmpeg as backend 
     try:
         n_frames = resolve_frame_count(reader)
         sampled_indices = uniform_sample_indices(n_frames, frames_per_video)
@@ -184,7 +183,7 @@ def sample_video_frames(
     x = F.interpolate(x, size=resize_hw, mode="bilinear", align_corners=False)
     return x.contiguous(), n_frames, sampled_indices
 
-
+#Function to build a single embedding for the entire video by avg frame-level embeddings from the ResNet-18 backbone.
 @torch.no_grad()
 def build_video_embedding(
     embedder: ResNet18Embedder,
@@ -194,6 +193,7 @@ def build_video_embedding(
 ) -> np.ndarray:
     batches: List[torch.Tensor] = []
 
+    #For loop to process frames in batches:
     for start in range(0, frames.shape[0], batch_size):
         batch = frames[start : start + batch_size].to(device)
         batches.append(embedder(batch).cpu())
@@ -201,11 +201,12 @@ def build_video_embedding(
     frame_embeddings = torch.cat(batches, dim=0)
     return frame_embeddings.mean(dim=0, keepdim=True).numpy()
 
-
+#Function to get the probability of the "PASS" class from a given model and video embedding.
 def model_probability(model: LoadedModel, embedding: np.ndarray) -> float:
     return float(model.predict_proba(embedding)[0, 1])
 
-
+#Function to predict the label for a single video by extracting its embedding, getting prob from each model
+# & averaging them to get the final PASS probability:
 def predict_video(
     video_path: Path,
     *,
@@ -245,11 +246,11 @@ def predict_video(
         "label_confidence": np.round(label_confidence, 2),
         "pass_prob": np.round(pass_prob * 100, 2),
         "fail_prob": np.round(fail_prob * 100, 2),
-        "threshold": threshold,
+        # "threshold": threshold,# Uncomment if you want to know the threshold used for the prediction in the ouput CSV.
         "n_total_frames": n_total_frames,
     }
 
-
+#Writting the list of prediction rows to a CSV file: 
 def write_csv(path: Path, rows: List[PredictionRow]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if not rows:

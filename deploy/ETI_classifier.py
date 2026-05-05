@@ -31,7 +31,6 @@ except ImportError:
 def _default_model_dir() -> Path:
     return REPO_ROOT / hybrid_config.models_dir
 
-
 #Parsing arguments and running the main function.
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -83,7 +82,6 @@ def parse_args() -> argparse.Namespace:
     )
     return parser.parse_args()
 
-
 def main() -> None:
     args = parse_args()
     validate_args(args)
@@ -130,7 +128,6 @@ def main() -> None:
     )
     write_csv(output_csv, results)
     print(f"Wrote predictions to {output_csv}\n")
-
 
 if __name__ == "__main__":
     main()
