@@ -6,9 +6,9 @@
 ### Image Resolution Effects on DL Models for Video-Assisted Intubation
 ![resolution_research.docx.pdf](https://github.com/ngarci00/BENG_Senior-Design/blob/main/papers/resolution_research.docx.pdf)
 
-### Semester Long Project Research Paper
+### Project Research Paper
 
-Insert here!
+![Sp26_BENG493_Team6_Final_Report.docx.pdf](https://github.com/ngarci00/BENG_Senior-Design/blob/main/papers/Sp26_BENG493_Team6_Final_Report.docx.pdf)
 
 ## Archived Anatomy Pipeline (NOT in USE)
 
